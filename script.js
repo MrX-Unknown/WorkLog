@@ -4,9 +4,10 @@ let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
-// Load persisted data into UI on startup
+// Initialize the UI with persisted data
 updateHistoryTable();
 renderClientDropdown();
+renderClientActivity();
 
 // ---------------- Suggestions functions
 function suggestClient() {
@@ -20,6 +21,7 @@ function suggestClient() {
 function selectClient(client) {
   document.getElementById('client').value = client;
   document.getElementById('client-suggestions').style.display = 'none';
+  suggestActivity(); // Show relevant activity suggestions
 }
 
 function suggestActivity() {
@@ -38,7 +40,7 @@ function selectActivity(activity) {
   document.getElementById('activity-suggestions').style.display = 'none';
 }
 
-// Update toggle for ongoing status
+// ---------------- Status toggle
 document.getElementById('status').addEventListener('change', function() {
   const uc = document.getElementById('update-container');
   uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
@@ -63,9 +65,9 @@ function saveLog() {
   if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
   logData.push({ date, client, activity, status, update: updateValue });
-  if (logData.length > 15) logData.shift(); // Keep only last 15 entries
+  if (logData.length > 15) logData.shift(); // Keep last 15 logs
 
-  // Persist to localStorage
+  // Persist everything
   localStorage.setItem('workLogs', JSON.stringify(logData));
   localStorage.setItem('clients', JSON.stringify(clientHistory));
   localStorage.setItem('activities', JSON.stringify(activityHistory));
@@ -131,14 +133,14 @@ function editLog(index) {
 function deleteLog(index) {
   if (confirm('Are you sure?')) {
     logData.splice(index, 1);
-    // Update localStorage after deletion
+    // Persist after deletion
     localStorage.setItem('workLogs', JSON.stringify(logData));
     updateHistoryTable();
     renderClientActivity();
   }
 }
 
-// ---------------- Tab2 Client Activity
+// ---------------- Client Activity tab
 function renderClientDropdown() {
   const select = document.getElementById('client-select');
   const prev = lastSelectedClient;
@@ -198,7 +200,7 @@ document.addEventListener('pointerdown', e => {
   lastTap = currentTime;
 });
 
-// ---------------- Add client from input
+// ---------------- Add client manually
 function addClient() {
   const clientInput = document.getElementById('client');
   const clientName = clientInput.value.trim();

@@ -207,7 +207,7 @@
     document.addEventListener('pointerdown', e => {
       const currentTime = new Date().getTime();
       const tapLength = currentTime - lastTap;
-      if (tapLength < 300 && tapLength > 0) {
+      if (tapLength < 1.00 && tapLength > 0) {
         toggleTab();
         e.preventDefault();
       }

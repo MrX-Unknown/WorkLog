@@ -1,143 +1,213 @@
-// Global arrays to store history and client data
-let historyData = [];
-let clientData = [];  // Store unique clients
-let activityData = {};  // Store activities per client
+// ---------------- Tab 1 Data with persistence
+let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
+let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
+let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
+let lastSelectedClient = null;
 
-// Function to save data and display it in the Activity History section
-function saveData() {
-  const date = document.getElementById("date").value;
-  const client = document.getElementById("client").value;
-  const activity = document.getElementById("activity").value;
-  const status = document.getElementById("status").value;
+// Load persisted data into UI on startup
+updateHistoryTable();
+renderClientDropdown();
 
-  if (date && client && activity && status) {
-    const newEntry = { date, client, activity, status };
+// ---------------- Suggestions functions
+function suggestClient() {
+  const input = document.getElementById('client').value;
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
+  const box = document.getElementById('client-suggestions');
+  box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
+}
 
-    // Add the new entry to history data
-    historyData.push(newEntry);
+function selectClient(client) {
+  document.getElementById('client').value = client;
+  document.getElementById('client-suggestions').style.display = 'none';
+}
 
-    // Update client data and activity data for suggestions
-    if (!clientData.includes(client)) clientData.push(client);
-    if (!activityData[client]) activityData[client] = [];
-    if (!activityData[client].includes(activity)) activityData[client].push(activity);
-
-    // Display the updated Activity History table
-    displayHistoryTable();
-
-    // Clear the input fields
-    clearInputs();
-  } else {
-    alert("Please fill in all fields.");
+function suggestActivity() {
+  const input = document.getElementById('activity').value;
+  const client = document.getElementById('client').value;
+  if (activityHistory[client]) {
+    const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
+    const box = document.getElementById('activity-suggestions');
+    box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+    box.style.display = suggestions.length ? 'block' : 'none';
   }
 }
 
-// Function to clear input fields after saving the data
-function clearInputs() {
-  document.getElementById("date").value = '';
-  document.getElementById("activity").value = '';
-  document.getElementById("status").value = 'Ongoing';
-  document.getElementById("client").value = '';
-  document.getElementById("client-suggestions").innerHTML = '';
-  document.getElementById("activity-suggestions").innerHTML = '';
+function selectActivity(activity) {
+  document.getElementById('activity').value = activity;
+  document.getElementById('activity-suggestions').style.display = 'none';
 }
 
-// Function to display the history table with saved data (max 15 rows)
-function displayHistoryTable() {
-  const tableBody = document.querySelector("#history-table tbody");
-  tableBody.innerHTML = ''; // Clear previous rows
+// Update toggle for ongoing status
+document.getElementById('status').addEventListener('change', function() {
+  const uc = document.getElementById('update-container');
+  uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
+  if (this.value !== 'ongoing') document.getElementById('update').value = '';
+});
 
-  // Limit to 15 rows
-  const rowsToDisplay = historyData.slice(-15);
+// ---------------- Save log
+function saveLog() {
+  const date = document.getElementById('date').value;
+  const client = document.getElementById('client').value.trim();
+  const activity = document.getElementById('activity').value.trim();
+  const status = document.getElementById('status').value;
+  const updateValue = document.getElementById('update').value.trim();
 
-  // Loop through the data and add rows
-  rowsToDisplay.forEach(entry => {
-    const row = document.createElement("tr");
-    row.classList.add(entry.status === 'New' ? 'new-activity' : ''); // Bold "New" activities
+  if (!date || !client || !activity || !status) {
+    alert('Please fill all fields');
+    return;
+  }
 
-    row.innerHTML = `
-      <td>${entry.date}</td>
-      <td>${entry.activity}</td>
-      <td>${entry.status}</td>
-      <td>${entry.client}</td>
-    `;
-    tableBody.appendChild(row);
+  if (!clientHistory.includes(client)) clientHistory.push(client);
+  if (!activityHistory[client]) activityHistory[client] = [];
+  if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
+
+  logData.push({ date, client, activity, status, update: updateValue });
+  if (logData.length > 15) logData.shift(); // Keep only last 15 entries
+
+  // Persist to localStorage
+  localStorage.setItem('workLogs', JSON.stringify(logData));
+  localStorage.setItem('clients', JSON.stringify(clientHistory));
+  localStorage.setItem('activities', JSON.stringify(activityHistory));
+
+  updateHistoryTable();
+  renderClientDropdown();
+
+  // Reset form
+  document.getElementById('date').value = '';
+  document.getElementById('client').value = '';
+  document.getElementById('activity').value = '';
+  document.getElementById('status').value = 'new';
+  document.getElementById('update').value = '';
+  document.getElementById('update-container').style.display = 'none';
+}
+
+// ---------------- Update history table
+function updateHistoryTable() {
+  const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  logData.forEach((log, index) => {
+    const row = tbody.insertRow();
+    row.insertCell(0).innerText = log.date;
+    row.insertCell(1).innerText = log.client;
+    row.insertCell(2).innerText = log.activity;
+    row.insertCell(3).innerText = log.status;
+    row.insertCell(4).innerText = log.update;
+
+    const actions = row.insertCell(5);
+    actions.classList.add('action-buttons');
+
+    const editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.classList.add('edit-button');
+    editBtn.onclick = () => editLog(index);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerText = 'Delete';
+    deleteBtn.classList.add('delete-button');
+    deleteBtn.onclick = () => deleteLog(index);
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
   });
 }
 
-// Function to show client suggestions as user types
-function showClientSuggestions() {
-  const clientInput = document.getElementById("client").value;
-  const suggestionsList = document.getElementById("client-suggestions");
-  suggestionsList.innerHTML = '';
+// ---------------- Edit/Delete
+function editLog(index) {
+  const log = logData[index];
+  document.getElementById('date').value = log.date;
+  document.getElementById('client').value = log.client;
+  document.getElementById('activity').value = log.activity;
+  document.getElementById('status').value = log.status;
 
-  // Filter and display suggestions
-  const filteredClients = clientData.filter(client => client.toLowerCase().startsWith(clientInput.toLowerCase()));
-  
-  filteredClients.forEach(client => {
-    const li = document.createElement("li");
-    li.textContent = client;
-    li.onclick = () => {
-      document.getElementById("client").value = client;
-      suggestionsList.innerHTML = '';
-      showActivitySuggestions();  // Show activity suggestions for the selected client
-    };
-    suggestionsList.appendChild(li);
-  });
+  if (log.status === 'ongoing') {
+    document.getElementById('update-container').style.display = 'block';
+    document.getElementById('update').value = log.update;
+  }
+
+  deleteLog(index); // Remove before editing
 }
 
-// Function to show activity suggestions based on selected client
-function showActivitySuggestions() {
-  const activityInput = document.getElementById("activity").value;
-  const client = document.getElementById("client").value;
-  const suggestionsList = document.getElementById("activity-suggestions");
-  suggestionsList.innerHTML = '';
+function deleteLog(index) {
+  if (confirm('Are you sure?')) {
+    logData.splice(index, 1);
+    // Update localStorage after deletion
+    localStorage.setItem('workLogs', JSON.stringify(logData));
+    updateHistoryTable();
+    renderClientActivity();
+  }
+}
 
-  // If client is selected, show activity suggestions
-  if (client && activityData[client]) {
-    const filteredActivities = activityData[client].filter(activity => activity.toLowerCase().startsWith(activityInput.toLowerCase()));
+// ---------------- Tab2 Client Activity
+function renderClientDropdown() {
+  const select = document.getElementById('client-select');
+  const prev = lastSelectedClient;
+  select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join('');
+  if (prev) select.value = prev;
+}
 
-    filteredActivities.forEach(activity => {
-      const li = document.createElement("li");
-      li.textContent = activity;
-      li.onclick = () => {
-        document.getElementById("activity").value = activity;
-        suggestionsList.innerHTML = '';
-      };
-      suggestionsList.appendChild(li);
+function renderClientActivity() {
+  const client = document.getElementById('client-select').value;
+  lastSelectedClient = client;
+  const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  const clientLogs = logData.filter(l => l.client === client);
+
+  const grouped = {};
+  clientLogs.forEach(l => {
+    if (!grouped[l.activity]) grouped[l.activity] = [];
+    grouped[l.activity].push(l);
+  });
+
+  Object.keys(grouped).forEach(act => {
+    grouped[act].forEach(l => {
+      const row = tbody.insertRow();
+      row.insertCell(0).innerText = l.date;
+      row.insertCell(1).innerText = l.activity;
+      row.insertCell(2).innerText = l.update;
+      row.insertCell(3).innerText = l.status;
+
+      if (l.status === 'new') row.style.fontWeight = 'bold';
     });
-  }
-}
-
-// Function to switch between Work Log and Client Activity tabs
-function switchTab(tab) {
-  if (tab === 'work-log') {
-    document.getElementById("work-log-section").style.display = "block";
-    document.getElementById("client-activity-tab").style.display = "none";
-  } else if (tab === 'client-activity') {
-    document.getElementById("work-log-section").style.display = "none";
-    document.getElementById("client-activity-tab").style.display = "block";
-    displayClientActivities();
-  }
-}
-
-// Function to filter client activities based on selected client
-function filterClientActivities() {
-  const selectedClient = document.getElementById("select-client").value;
-  const filteredData = historyData.filter(entry => entry.client === selectedClient);
-
-  const tableBody = document.querySelector("#client-activity-table tbody");
-  tableBody.innerHTML = ''; // Clear previous rows
-
-  // Loop through the filtered data and add rows
-  filteredData.forEach(entry => {
-    const row = document.createElement("tr");
-    row.classList.add(entry.status === 'New' ? 'new-activity' : ''); // Bold "New" activities
-
-    row.innerHTML = `
-      <td>${entry.date}</td>
-      <td>${entry.activity}</td>
-      <td>${entry.status}</td>
-    `;
-    tableBody.appendChild(row);
   });
+}
+
+// ---------------- Tabs toggle
+let lastTap = 0;
+function toggleTab() {
+  const tab1 = document.getElementById('tab1');
+  const tab2 = document.getElementById('tab2');
+  if (tab1.style.display !== 'none') {
+    tab1.style.display = 'none';
+    tab2.style.display = 'block';
+    renderClientDropdown();
+    renderClientActivity();
+  } else {
+    tab1.style.display = 'block';
+    tab2.style.display = 'none';
+  }
+}
+document.addEventListener('dblclick', toggleTab);
+document.addEventListener('pointerdown', e => {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength < 1000 && tapLength > 0) {
+    toggleTab();
+    e.preventDefault();
+  }
+  lastTap = currentTime;
+});
+
+// ---------------- Add client from input
+function addClient() {
+  const clientInput = document.getElementById('client');
+  const clientName = clientInput.value.trim();
+  if (clientName && !clientHistory.includes(clientName)) {
+    clientHistory.push(clientName);
+    localStorage.setItem('clients', JSON.stringify(clientHistory));
+    suggestClient(); 
+    clientInput.value = '';
+  } else {
+    alert("Client is either empty or already added!");
+  }
 }

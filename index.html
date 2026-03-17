@@ -439,7 +439,7 @@ document.addEventListener('dblclick', toggleTab);
 document.addEventListener('pointerdown', e => {
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
-  if (tapLength < 300 && tapLength > 0) {
+  if (tapLength < 500 && tapLength > 0) {
     toggleTab();
     e.preventDefault();
   }

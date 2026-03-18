@@ -7,86 +7,60 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
+  font-family: Arial;
+  background: #f4f4f4;
   padding: 20px;
-  background-color: #f4f4f4;
 }
 
 h1 {
   text-align: center;
-  font-size: 64px;
-  font-weight: bold;
 }
 
-h2.subtitle {
-  text-align: center;
-  font-size: 24px;
-  margin: 5px 0 20px 0;
-}
-
-/* NEW TAB BUTTONS */
+/* TAB BUTTONS */
 .tab-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+  text-align: center;
   margin-bottom: 15px;
 }
 
 .tab-buttons button {
   padding: 10px 20px;
-  background-color: #888;
+  margin: 5px;
+  background: gray;
   color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 5px;
 }
 
-.tab-buttons button:hover {
-  background-color: #555;
-}
-
+/* FORM */
 .form-container {
-  max-width: 600px;
-  margin: auto;
-  background: #fff;
+  background: white;
   padding: 10px;
-  border-radius: 8px;
+  max-width: 500px;
+  margin: auto;
 }
 
-.form-group { margin-bottom: 10px; }
-
-.form-group input, .form-group select {
+input, select {
   width: 100%;
-  padding: 5px;
+  margin-bottom: 10px;
+  padding: 6px;
 }
 
-button { cursor: pointer; }
-
-.history-container, .client-activity-container {
-  margin-top: 20px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
+/* TABLE */
 table {
   width: 100%;
+  margin-top: 20px;
   border-collapse: collapse;
 }
 
 th, td {
+  border: 1px solid #ccc;
   padding: 8px;
-  border: 1px solid #ddd;
 }
 
 th {
-  background: #4CAF50;
+  background: green;
   color: white;
 }
-
-.edit-button { background: #2196F3; color: white; }
-.delete-button { background: #f44336; color: white; }
 </style>
 </head>
 
@@ -96,238 +70,155 @@ th {
 <div id="tab1">
   <h1>Work Log</h1>
 
-  <!-- BUTTONS -->
   <div class="tab-buttons">
     <button onclick="showTab(1)">Activity History</button>
     <button onclick="showTab(2)">Client Activity</button>
   </div>
 
   <div class="form-container">
-    <div class="form-group">
-      <input type="date" id="date">
-    </div>
+    <input type="date" id="date">
+    <input type="text" id="client" placeholder="Client">
+    <input type="text" id="activity" placeholder="Activity">
 
-    <div class="form-group">
-      <input type="text" id="client" placeholder="Client">
-    </div>
+    <select id="status">
+      <option value="new">New</option>
+      <option value="ongoing">On Going</option>
+      <option value="done">Done</option>
+    </select>
 
-    <div class="form-group">
-      <input type="text" id="activity" placeholder="Activity">
-    </div>
+    <input type="text" id="update" placeholder="Update (optional)">
 
-    <div class="form-group">
-      <select id="status">
-        <option value="new">New</option>
-        <option value="ongoing">On Going</option>
-        <option value="done">Done</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="update-container" style="display:none;">
-      <input type="text" id="update" placeholder="Update">
-    </div>
-
-    <button onclick="saveLog()">Enter</button>
+    <button onclick="saveLog()">SAVE</button>
   </div>
 
-  <div class="history-container">
-    <h2>Activity History</h2>
-    <table id="history-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Client</th>
-          <th>Activity</th>
-          <th>Status</th>
-          <th>Update</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Client</th>
+        <th>Activity</th>
+        <th>Status</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody id="history"></tbody>
+  </table>
 </div>
 
 <!-- TAB 2 -->
 <div id="tab2" style="display:none;">
-  <h1>Work Log</h1>
+  <h1>Client Activity</h1>
 
-  <!-- BUTTONS -->
   <div class="tab-buttons">
     <button onclick="showTab(1)">Activity History</button>
     <button onclick="showTab(2)">Client Activity</button>
   </div>
 
-  <h2 class="subtitle">Client Activity</h2>
+  <select id="clientSelect" onchange="showClientData()"></select>
 
-  <div class="client-activity-container">
-    <select id="client-select" onchange="renderClientActivity()"></select>
-
-    <table id="client-activity-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Activity</th>
-          <th>Update</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Activity</th>
+        <th>Status</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody id="clientTable"></tbody>
+  </table>
 </div>
 
 <script>
-let clientHistory = [];
-let activityHistory = {};
-let logData = [];
-let lastSelectedClient = null;
+let logs = JSON.parse(localStorage.getItem("logs")) || [];
 
-/* LOAD DATA */
-window.onload = function() {
-  loadFromStorage();
-};
-
-/* SHOW TAB */
+/* SWITCH TAB */
 function showTab(tab) {
-  document.getElementById('tab1').style.display = (tab === 1) ? 'block' : 'none';
-  document.getElementById('tab2').style.display = (tab === 2) ? 'block' : 'none';
+  document.getElementById("tab1").style.display = tab === 1 ? "block" : "none";
+  document.getElementById("tab2").style.display = tab === 2 ? "block" : "none";
 
-  if (tab === 2) {
-    renderClientDropdown();
-    renderClientActivity();
-  }
+  if (tab === 2) loadClients();
 }
 
-/* STATUS CHANGE */
-document.getElementById('status').addEventListener('change', function() {
-  document.getElementById('update-container').style.display =
-    this.value === 'ongoing' ? 'block' : 'none';
-});
-
-/* SAVE LOG */
+/* SAVE DATA */
 function saveLog() {
-  const date = dateEl().value;
-  const client = clientEl().value;
-  const activity = activityEl().value;
-  const status = statusEl().value;
-  const update = updateEl().value;
+  const date = document.getElementById("date").value;
+  const client = document.getElementById("client").value;
+  const activity = document.getElementById("activity").value;
+  const status = document.getElementById("status").value;
+  const update = document.getElementById("update").value;
 
   if (!date || !client || !activity) {
-    alert("Fill all fields");
+    alert("Fill all fields!");
     return;
   }
 
-  if (!clientHistory.includes(client)) clientHistory.push(client);
+  logs.push({ date, client, activity, status, update });
 
-  if (!activityHistory[client]) activityHistory[client] = [];
-  if (!activityHistory[client].includes(activity))
-    activityHistory[client].push(activity);
+  localStorage.setItem("logs", JSON.stringify(logs));
 
-  logData.push({ date, client, activity, status, update });
-
-  saveToStorage();
-  updateTable();
-
-  dateEl().value = "";
-  clientEl().value = "";
-  activityEl().value = "";
-  updateEl().value = "";
+  renderTable();
+  clearForm();
 }
 
-/* UPDATE TABLE */
-function updateTable() {
-  const tbody = document.querySelector("#history-table tbody");
+/* DISPLAY TABLE */
+function renderTable() {
+  const tbody = document.getElementById("history");
   tbody.innerHTML = "";
 
-  logData.forEach((log, i) => {
-    const row = tbody.insertRow();
-
-    row.innerHTML = `
-      <td>${log.date}</td>
-      <td>${log.client}</td>
-      <td>${log.activity}</td>
-      <td>${log.status}</td>
-      <td>${log.update}</td>
-      <td>
-        <button onclick="editLog(${i})">Edit</button>
-        <button onclick="deleteLog(${i})">Delete</button>
-      </td>
+  logs.forEach(log => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${log.date}</td>
+        <td>${log.client}</td>
+        <td>${log.activity}</td>
+        <td>${log.status}</td>
+        <td>${log.update}</td>
+      </tr>
     `;
   });
 }
 
-/* EDIT */
-function editLog(i) {
-  const log = logData[i];
+/* LOAD CLIENT DROPDOWN */
+function loadClients() {
+  const select = document.getElementById("clientSelect");
 
-  dateEl().value = log.date;
-  clientEl().value = log.client;
-  activityEl().value = log.activity;
-  statusEl().value = log.status;
-  updateEl().value = log.update;
+  let clients = [...new Set(logs.map(l => l.client))];
 
-  deleteLog(i);
+  select.innerHTML = clients.map(c => `<option>${c}</option>`).join("");
+
+  showClientData();
 }
 
-/* DELETE */
-function deleteLog(i) {
-  logData.splice(i, 1);
-  saveToStorage();
-  updateTable();
-}
-
-/* CLIENT DROPDOWN */
-function renderClientDropdown() {
-  const select = document.getElementById("client-select");
-
-  select.innerHTML = clientHistory
-    .map(c => `<option>${c}</option>`)
-    .join("");
-}
-
-/* CLIENT ACTIVITY */
-function renderClientActivity() {
-  const client = document.getElementById("client-select").value;
-  const tbody = document.querySelector("#client-activity-table tbody");
+/* SHOW CLIENT DATA */
+function showClientData() {
+  const client = document.getElementById("clientSelect").value;
+  const tbody = document.getElementById("clientTable");
 
   tbody.innerHTML = "";
 
-  logData
-    .filter(l => l.client === client)
-    .forEach(l => {
-      const row = tbody.insertRow();
-      row.innerHTML = `
+  logs.filter(l => l.client === client).forEach(l => {
+    tbody.innerHTML += `
+      <tr>
         <td>${l.date}</td>
         <td>${l.activity}</td>
-        <td>${l.update}</td>
         <td>${l.status}</td>
-      `;
-    });
+        <td>${l.update}</td>
+      </tr>
+    `;
+  });
 }
 
-/* STORAGE */
-function saveToStorage() {
-  localStorage.setItem("clients", JSON.stringify(clientHistory));
-  localStorage.setItem("activities", JSON.stringify(activityHistory));
-  localStorage.setItem("logs", JSON.stringify(logData));
+/* CLEAR FORM */
+function clearForm() {
+  document.getElementById("date").value = "";
+  document.getElementById("client").value = "";
+  document.getElementById("activity").value = "";
+  document.getElementById("update").value = "";
 }
 
-function loadFromStorage() {
-  clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
-  activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
-  logData = JSON.parse(localStorage.getItem("logs")) || [];
-
-  updateTable();
-}
-
-/* HELPERS */
-const dateEl = () => document.getElementById("date");
-const clientEl = () => document.getElementById("client");
-const activityEl = () => document.getElementById("activity");
-const statusEl = () => document.getElementById("status");
-const updateEl = () => document.getElementById("update");
-
+/* LOAD ON START */
+renderTable();
 </script>
 
 </body>

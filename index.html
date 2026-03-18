@@ -109,53 +109,6 @@
       background-color: #e0f7fa;
     }
 
-    /* Column widths for history table */
-    #history-table th:nth-child(1), #history-table td:nth-child(1) { width: 12%; }
-    #history-table th:nth-child(2), #history-table td:nth-child(2) { width: 18%; }
-    #history-table th:nth-child(3), #history-table td:nth-child(3) { width: 30%; }
-    #history-table th:nth-child(4), #history-table td:nth-child(4) { width: 12%; }
-    #history-table th:nth-child(5), #history-table td:nth-child(5) { width: 20%; }
-    #history-table th:nth-child(6), #history-table td:nth-child(6) { width: 8%; }
-
-    /* Avoid text wrap in short columns */
-    #history-table th:nth-child(1), #history-table td:nth-child(1),
-    #history-table th:nth-child(2), #history-table td:nth-child(2),
-    #history-table th:nth-child(4), #history-table td:nth-child(4),
-    #history-table th:nth-child(6), #history-table td:nth-child(6) {
-      white-space: nowrap;
-    }
-
-    /* Wrap for Activity and Update columns */
-    #history-table th:nth-child(3), #history-table td:nth-child(3),
-    #history-table th:nth-child(5), #history-table td:nth-child(5) {
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    td {
-      font-size: 14px;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-    }
-
-    .edit-button, .delete-button {
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 4px;
-      color: white;
-      border: none;
-    }
-
-    .edit-button { background-color: #2196F3; }
-    .delete-button { background-color: #f44336; }
-
-    .edit-button:hover, .delete-button:hover {
-      opacity: 0.8;
-    }
-
     .scrollable {
       max-height: 250px;
       overflow-y: auto;
@@ -179,6 +132,18 @@
       position: sticky;
       top: 0;
       z-index: 1;
+    }
+
+    #client-suggestions div {
+      padding: 6px;
+      cursor: pointer;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      margin: 2px 0;
+    }
+
+    #client-suggestions div:hover {
+      background-color: #e0e0e0;
     }
   </style>
 </head>
@@ -265,24 +230,9 @@
     </div>
   </div>
 
-  <!-- Tab 3 (Removed Clients) -->
-  <div id="tab3" class="tab" style="display:none;">
-    <h1>Removed Clients</h1>
-    <div class="scrollable">
-      <table id="removed-clients-table">
-        <thead>
-          <tr>
-            <th>Client</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-
   <script>
     // ---------------- Tab 1 Data
-    let clientHistory = [], activityHistory = {}, logData = [], removedClients = [], lastSelectedClient = null;
+    let clientHistory = [], activityHistory = {}, logData = [], lastSelectedClient = null;
 
     // Load data from localStorage on page load
     window.onload = function () {
@@ -303,64 +253,41 @@
       document.getElementById('client-suggestions').style.display = 'none';
     }
 
-    function suggestActivity() {
-      const input = document.getElementById('activity').value;
-      const client = document.getElementById('client').value;
-      if (activityHistory[client]) {
-        const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
-        const box = document.getElementById('activity-suggestions');
-        box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
-        box.style.display = suggestions.length ? 'block' : 'none';
+    function addClient() {
+      const clientInput = document.getElementById('client');
+      const clientName = clientInput.value.trim();
+      if (clientName && !clientHistory.includes(clientName)) {
+        clientHistory.push(clientName);
+        suggestClient(); // Update suggestions
+        clientInput.value = ''; // Clear input field
+        saveToStorage(); // Save changes to localStorage
+      } else {
+        alert("Client is either empty or already added!");
       }
     }
 
-    function selectActivity(activity) {
-      document.getElementById('activity').value = activity;
-      document.getElementById('activity-suggestions').style.display = 'none';
+    function removeClient() {
+      const clientInput = document.getElementById('client');
+      const clientName = clientInput.value.trim();
+      if (clientName && clientHistory.includes(clientName)) {
+        clientHistory = clientHistory.filter(c => c !== clientName);
+        saveToStorage();
+        suggestClient(); // Update suggestions
+        loadRemovedClients();
+        renderClientDropdown();
+      } else {
+        alert("Client not found or empty!");
+      }
     }
 
-    // Update toggle
-    document.getElementById('status').addEventListener('change', function() {
-      const uc = document.getElementById('update-container');
-      uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
-      if (this.value !== 'ongoing') document.getElementById('update').value = '';
-    });
-
-    // Save log to localStorage
-    function saveLog() {
-      const date = document.getElementById('date').value;
-      const client = document.getElementById('client').value;
-      const activity = document.getElementById('activity').value;
-      const status = document.getElementById('status').value;
-      const updateValue = document.getElementById('update').value;
-
-      if (!date || !client || !activity || !status) {
-        alert('Please fill all fields');
-        return;
-      }
-
-      if (!clientHistory.includes(client)) clientHistory.push(client);
-      if (!activityHistory[client]) activityHistory[client] = [];
-      if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
-
-      const logEntry = { date, client, activity, status, update: updateValue };
-      logData.push(logEntry);
-
-      if (logData.length > 15) logData.shift(); // Limit to last 15 entries
-
-      // Save the updated data to localStorage
-      saveToStorage();
-
-      updateHistoryTable();
-      renderClientDropdown();
-
-      // Reset form
-      document.getElementById('date').value = '';
-      document.getElementById('client').value = '';
-      document.getElementById('activity').value = '';
-      document.getElementById('status').value = 'new';
-      document.getElementById('update').value = '';
-      document.getElementById('update-container').style.display = 'none';
+    // Load removed clients into the tab
+    function loadRemovedClients() {
+      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      clientHistory.forEach(client => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = client;
+      });
     }
 
     // Save data to localStorage
@@ -368,7 +295,6 @@
       localStorage.setItem('clientHistory', JSON.stringify(clientHistory));
       localStorage.setItem('activityHistory', JSON.stringify(activityHistory));
       localStorage.setItem('logData', JSON.stringify(logData));
-      localStorage.setItem('removedClients', JSON.stringify(removedClients));
     }
 
     // Load data from localStorage
@@ -376,16 +302,13 @@
       const storedClientHistory = localStorage.getItem('clientHistory');
       const storedActivityHistory = localStorage.getItem('activityHistory');
       const storedLogData = localStorage.getItem('logData');
-      const storedRemovedClients = localStorage.getItem('removedClients');
 
       if (storedClientHistory) clientHistory = JSON.parse(storedClientHistory);
       if (storedActivityHistory) activityHistory = JSON.parse(storedActivityHistory);
       if (storedLogData) logData = JSON.parse(storedLogData);
-      if (storedRemovedClients) removedClients = JSON.parse(storedRemovedClients);
 
       updateHistoryTable();
       renderClientDropdown();
-      loadRemovedClients();
     }
 
     // Update history table
@@ -429,18 +352,16 @@
         renderClientActivity();
       }
     }
-
-    // ---------------- Tab2 Client Activity
+    
+    // Rendering client dropdown for Tab 2
     function renderClientDropdown() {
       const select = document.getElementById('client-select');
-      const prev = lastSelectedClient;
       select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join('');
-      if (prev) select.value = prev;
     }
 
+    // Render client activity
     function renderClientActivity() {
       const client = document.getElementById('client-select').value;
-      lastSelectedClient = client;
       const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
       const clientLogs = logData.filter(l => l.client === client);
@@ -458,71 +379,7 @@
           row.insertCell(1).innerText = l.activity;
           row.insertCell(2).innerText = l.update;
           row.insertCell(3).innerText = l.status;
-
-          // Highlight "new" status
-          if (l.status === 'new') row.style.fontWeight = 'bold';
         });
-      });
-    }
-
-    // ---------------- Tabs toggle
-    let lastTap = 0;
-
-    function toggleTab() {
-      const tab1 = document.getElementById('tab1');
-      const tab2 = document.getElementById('tab2');
-      const tab3 = document.getElementById('tab3');
-      
-      if (tab1.style.display !== 'none') {
-        tab1.style.display = 'none';
-        tab2.style.display = 'block';
-        renderClientDropdown();
-        renderClientActivity();
-      } else if (tab2.style.display !== 'none') {
-        tab2.style.display = 'none';
-        tab3.style.display = 'block';
-        loadRemovedClients();
-      } else {
-        tab1.style.display = 'block';
-        tab2.style.display = 'none';
-        tab3.style.display = 'none';
-      }
-    }
-
-    document.addEventListener('dblclick', toggleTab);
-    document.addEventListener('pointerdown', e => {
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTap;
-      if (tapLength < 800 && tapLength > 0) {
-        toggleTab();
-        e.preventDefault();
-      }
-      lastTap = currentTime;
-    });
-
-    // ---------------- Remove Client Logic
-    function removeClient() {
-      const clientInput = document.getElementById('client');
-      const clientName = clientInput.value.trim();
-
-      if (!clientName) return alert('Please input a client name to remove.');
-
-      // Add to removed clients and update storage
-      removedClients.push(clientName);
-      clientHistory = clientHistory.filter(c => c !== clientName);
-      saveToStorage();
-
-      loadRemovedClients();
-      renderClientDropdown();
-    }
-
-    // Load removed clients into the tab
-    function loadRemovedClients() {
-      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
-      tbody.innerHTML = '';
-      removedClients.forEach(client => {
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = client;
       });
     }
   </script>

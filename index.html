@@ -268,6 +268,11 @@
     // ---------------- Tab 1 Data
     let clientHistory = [], activityHistory = {}, logData = [], lastSelectedClient = null;
 
+    // Load data from localStorage on page load
+    window.onload = function () {
+      loadFromStorage();
+    };
+
     // Suggestions functions
     function suggestClient() {
       const input = document.getElementById('client').value;
@@ -305,7 +310,7 @@
       if (this.value !== 'ongoing') document.getElementById('update').value = '';
     });
 
-    // Save log
+    // Save log to localStorage
     function saveLog() {
       const date = document.getElementById('date').value;
       const client = document.getElementById('client').value;
@@ -322,9 +327,13 @@
       if (!activityHistory[client]) activityHistory[client] = [];
       if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
-      logData.push({ date, client, activity, status, update: updateValue });
+      const logEntry = { date, client, activity, status, update: updateValue };
+      logData.push(logEntry);
 
       if (logData.length > 15) logData.shift(); // Limit to last 15 entries
+
+      // Save the updated data to localStorage
+      saveToStorage();
 
       updateHistoryTable();
       renderClientDropdown();
@@ -336,6 +345,27 @@
       document.getElementById('status').value = 'new';
       document.getElementById('update').value = '';
       document.getElementById('update-container').style.display = 'none';
+    }
+
+    // Save data to localStorage
+    function saveToStorage() {
+      localStorage.setItem('clientHistory', JSON.stringify(clientHistory));
+      localStorage.setItem('activityHistory', JSON.stringify(activityHistory));
+      localStorage.setItem('logData', JSON.stringify(logData));
+    }
+
+    // Load data from localStorage
+    function loadFromStorage() {
+      const storedClientHistory = localStorage.getItem('clientHistory');
+      const storedActivityHistory = localStorage.getItem('activityHistory');
+      const storedLogData = localStorage.getItem('logData');
+
+      if (storedClientHistory) clientHistory = JSON.parse(storedClientHistory);
+      if (storedActivityHistory) activityHistory = JSON.parse(storedActivityHistory);
+      if (storedLogData) logData = JSON.parse(storedLogData);
+
+      updateHistoryTable();
+      renderClientDropdown();
     }
 
     // Update history table
@@ -370,24 +400,11 @@
       });
     }
 
-    function editLog(index) {
-      const log = logData[index];
-      document.getElementById('date').value = log.date;
-      document.getElementById('client').value = log.client;
-      document.getElementById('activity').value = log.activity;
-      document.getElementById('status').value = log.status;
-
-      if (log.status === 'ongoing') {
-        document.getElementById('update-container').style.display = 'block';
-        document.getElementById('update').value = log.update;
-      }
-
-      deleteLog(index); // Remove the current log before editing
-    }
-
+    // Delete log
     function deleteLog(index) {
       if (confirm('Are you sure?')) {
         logData.splice(index, 1);
+        saveToStorage();
         updateHistoryTable();
         renderClientActivity();
       }
@@ -464,6 +481,7 @@
         clientHistory.push(clientName);
         suggestClient(); // Update suggestions
         clientInput.value = ''; // Clear input
+        saveToStorage(); // Save changes to localStorage
       } else {
         alert("Client is either empty or already added!");
       }

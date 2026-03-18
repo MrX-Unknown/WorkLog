@@ -282,7 +282,7 @@
 
   <script>
     // ---------------- Tab 1 Data
-    let clientHistory = [], activityHistory = {}, logData = [], lastSelectedClient = null;
+    let clientHistory = [], activityHistory = {}, logData = [], removedClients = [], lastSelectedClient = null;
 
     // Load data from localStorage on page load
     window.onload = function () {
@@ -368,6 +368,7 @@
       localStorage.setItem('clientHistory', JSON.stringify(clientHistory));
       localStorage.setItem('activityHistory', JSON.stringify(activityHistory));
       localStorage.setItem('logData', JSON.stringify(logData));
+      localStorage.setItem('removedClients', JSON.stringify(removedClients));
     }
 
     // Load data from localStorage
@@ -375,13 +376,16 @@
       const storedClientHistory = localStorage.getItem('clientHistory');
       const storedActivityHistory = localStorage.getItem('activityHistory');
       const storedLogData = localStorage.getItem('logData');
+      const storedRemovedClients = localStorage.getItem('removedClients');
 
       if (storedClientHistory) clientHistory = JSON.parse(storedClientHistory);
       if (storedActivityHistory) activityHistory = JSON.parse(storedActivityHistory);
       if (storedLogData) logData = JSON.parse(storedLogData);
+      if (storedRemovedClients) removedClients = JSON.parse(storedRemovedClients);
 
       updateHistoryTable();
       renderClientDropdown();
+      loadRemovedClients();
     }
 
     // Update history table
@@ -501,55 +505,25 @@
       const clientInput = document.getElementById('client');
       const clientName = clientInput.value.trim();
 
-      if (clientName && clientHistory.includes(clientName)) {
-        // Remove client from current history
-        clientHistory = clientHistory.filter(client => client !== clientName);
-        
-        // Also remove associated logs from logData
-        logData = logData.filter(log => log.client !== clientName);
+      if (!clientName) return alert('Please input a client name to remove.');
 
-        // Save updated data to localStorage
-        saveToStorage();
+      // Add to removed clients and update storage
+      removedClients.push(clientName);
+      clientHistory = clientHistory.filter(c => c !== clientName);
+      saveToStorage();
 
-        // Update History Table and Client Activity
-        updateHistoryTable();
-        renderClientDropdown();
-
-        // Move the removed client to Tab 3
-        moveToTab3(clientName);
-
-        // Clear the input
-        clientInput.value = '';
-      } else {
-        alert("Client not found!");
-      }
+      loadRemovedClients();
+      renderClientDropdown();
     }
 
-    // Move client to Tab 3
-    function moveToTab3(clientName) {
-      const previousClients = JSON.parse(localStorage.getItem('removedClients')) || [];
-      if (!previousClients.includes(clientName)) {
-        previousClients.push(clientName);
-        localStorage.setItem('removedClients', JSON.stringify(previousClients));
-      }
-
-      renderRemovedClients();
-    }
-
-    // Render Removed Clients in Tab 3
-    function renderRemovedClients() {
-      const removedClients = JSON.parse(localStorage.getItem('removedClients')) || [];
+    // Load removed clients into the tab
+    function loadRemovedClients() {
       const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
       removedClients.forEach(client => {
         const row = tbody.insertRow();
         row.insertCell(0).innerText = client;
       });
-    }
-
-    // Load removed clients into Tab 3
-    function loadRemovedClients() {
-      renderRemovedClients();
     }
   </script>
 </body>

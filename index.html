@@ -253,6 +253,23 @@
       document.getElementById('client-suggestions').style.display = 'none';
     }
 
+    function suggestActivity() {
+      const input = document.getElementById('activity').value;
+      const client = document.getElementById('client').value;
+      if (activityHistory[client]) {
+        const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
+        const box = document.getElementById('activity-suggestions');
+        box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+        box.style.display = suggestions.length ? 'block' : 'none';
+      }
+    }
+
+    function selectActivity(activity) {
+      document.getElementById('activity').value = activity;
+      document.getElementById('activity-suggestions').style.display = 'none';
+    }
+
+    // Add client function
     function addClient() {
       const clientInput = document.getElementById('client');
       const clientName = clientInput.value.trim();
@@ -266,6 +283,7 @@
       }
     }
 
+    // Remove client function
     function removeClient() {
       const clientInput = document.getElementById('client');
       const clientName = clientInput.value.trim();
@@ -280,7 +298,7 @@
       }
     }
 
-    // Load removed clients into the tab
+    // Load removed clients into Tab 3
     function loadRemovedClients() {
       const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
@@ -352,14 +370,13 @@
         renderClientActivity();
       }
     }
-    
-    // Rendering client dropdown for Tab 2
+
+    // ---------------- Tab2 Client Activity
     function renderClientDropdown() {
       const select = document.getElementById('client-select');
       select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
-    // Render client activity
     function renderClientActivity() {
       const client = document.getElementById('client-select').value;
       const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
@@ -382,6 +399,34 @@
         });
       });
     }
+
+    // ---------------- Tabs toggle (Double Click / Tap)
+    let lastTap = 0;
+
+    function toggleTab() {
+      const tab1 = document.getElementById('tab1');
+      const tab2 = document.getElementById('tab2');
+      if (tab1.style.display !== 'none') {
+        tab1.style.display = 'none';
+        tab2.style.display = 'block';
+        renderClientDropdown();
+        renderClientActivity();
+      } else {
+        tab1.style.display = 'block';
+        tab2.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('dblclick', toggleTab);
+    document.addEventListener('pointerdown', e => {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      if (tapLength < 800 && tapLength > 0) {
+        toggleTab();
+        e.preventDefault();
+      }
+      lastTap = currentTime;
+    });
   </script>
 </body>
 </html>

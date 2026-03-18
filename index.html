@@ -68,7 +68,7 @@
       background-color: #45a049;
     }
 
-    .history-container, .client-activity-container {
+    .history-container, .client-activity-container, .removed-clients-container {
       margin-top: 30px;
       max-width: 900px;
       margin-left: auto;
@@ -117,7 +117,7 @@
     }
 
     .tab {
-      display: block;
+      display: none;
     }
 
     #client-activity-table th, #client-activity-table td {
@@ -145,12 +145,32 @@
     #client-suggestions div:hover {
       background-color: #e0e0e0;
     }
+
+    .tab-switch-button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tab-switch-button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
+  <!-- Header and Tab Switch Button -->
+  <h1>Work Log</h1>
+  <button class="tab-switch-button" onclick="toggleTab()">Switch Tab</button>
+
   <!-- Tab 1 -->
-  <div id="tab1" class="tab">
-    <h1>Work Log</h1>
+  <div id="tab1" class="tab" style="display: block;">
+    <h2>Activity Log</h2>
     <div class="form-container" id="workLogForm">
       <div class="form-group">
         <label for="date">Date:</label>
@@ -159,7 +179,6 @@
       <div class="form-group">
         <label for="client">Client:</label>
         <div style="display: flex; align-items: center;">
-          <!-- Client Input and Add/Remove Buttons -->
           <input type="text" id="client" placeholder="Enter Client Name" oninput="suggestClient()" style="flex: 65%; padding: 4px 8px; font-size: 12px;">
           <button type="button" onclick="addClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add</button>
           <button type="button" onclick="removeClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
@@ -208,8 +227,7 @@
   </div>
 
   <!-- Tab 2 -->
-  <div id="tab2" class="tab" style="display:none;">
-    <h1>Work Log</h1>
+  <div id="tab2" class="tab">
     <h2 class="subtitle">Client Activity</h2>
     <div class="client-activity-container">
       <label for="client-select">Select Client:</label>
@@ -230,9 +248,27 @@
     </div>
   </div>
 
+  <!-- Tab 3: Removed Clients -->
+  <div id="tab3" class="tab">
+    <h2>Removed Clients</h2>
+    <div class="removed-clients-container">
+      <h2>Clients Removed from History</h2>
+      <div class="scrollable">
+        <table id="removed-clients-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ---------------- Tab 1 Data
-    let clientHistory = [], activityHistory = {}, logData = [], lastSelectedClient = null;
+    let clientHistory = [], activityHistory = {}, logData = [], removedClients = [], lastSelectedClient = null;
 
     // Load data from localStorage on page load
     window.onload = function () {
@@ -269,43 +305,48 @@
       document.getElementById('activity-suggestions').style.display = 'none';
     }
 
-    // Add client function
-    function addClient() {
-      const clientInput = document.getElementById('client');
-      const clientName = clientInput.value.trim();
-      if (clientName && !clientHistory.includes(clientName)) {
-        clientHistory.push(clientName);
-        suggestClient(); // Update suggestions
-        clientInput.value = ''; // Clear input field
-        saveToStorage(); // Save changes to localStorage
-      } else {
-        alert("Client is either empty or already added!");
-      }
-    }
+    // Update toggle
+    document.getElementById('status').addEventListener('change', function() {
+      const uc = document.getElementById('update-container');
+      uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
+      if (this.value !== 'ongoing') document.getElementById('update').value = '';
+    });
 
-    // Remove client function
-    function removeClient() {
-      const clientInput = document.getElementById('client');
-      const clientName = clientInput.value.trim();
-      if (clientName && clientHistory.includes(clientName)) {
-        clientHistory = clientHistory.filter(c => c !== clientName);
-        saveToStorage();
-        suggestClient(); // Update suggestions
-        loadRemovedClients();
-        renderClientDropdown();
-      } else {
-        alert("Client not found or empty!");
-      }
-    }
+    // Save log to localStorage
+    function saveLog() {
+      const date = document.getElementById('date').value;
+      const client = document.getElementById('client').value;
+      const activity = document.getElementById('activity').value;
+      const status = document.getElementById('status').value;
+      const updateValue = document.getElementById('update').value;
 
-    // Load removed clients into Tab 3
-    function loadRemovedClients() {
-      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
-      tbody.innerHTML = '';
-      clientHistory.forEach(client => {
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = client;
-      });
+      if (!date || !client || !activity || !status) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      if (!clientHistory.includes(client)) clientHistory.push(client);
+      if (!activityHistory[client]) activityHistory[client] = [];
+      if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
+
+      const logEntry = { date, client, activity, status, update: updateValue };
+      logData.push(logEntry);
+
+      if (logData.length > 15) logData.shift(); // Limit to last 15 entries
+
+      // Save the updated data to localStorage
+      saveToStorage();
+
+      updateHistoryTable();
+      renderClientDropdown();
+
+      // Reset form
+      document.getElementById('date').value = '';
+      document.getElementById('client').value = '';
+      document.getElementById('activity').value = '';
+      document.getElementById('status').value = 'new';
+      document.getElementById('update').value = '';
+      document.getElementById('update-container').style.display = 'none';
     }
 
     // Save data to localStorage
@@ -400,33 +441,24 @@
       });
     }
 
-    // ---------------- Tabs toggle (Double Click / Tap)
-    let lastTap = 0;
-
+    // ---------------- Tab Switching Function
     function toggleTab() {
       const tab1 = document.getElementById('tab1');
       const tab2 = document.getElementById('tab2');
-      if (tab1.style.display !== 'none') {
+      const tab3 = document.getElementById('tab3');
+      
+      if (tab1.style.display === 'block') {
         tab1.style.display = 'none';
         tab2.style.display = 'block';
-        renderClientDropdown();
-        renderClientActivity();
-      } else {
-        tab1.style.display = 'block';
+      } else if (tab2.style.display === 'block') {
         tab2.style.display = 'none';
+        tab3.style.display = 'block';
+      } else {
+        tab3.style.display = 'none';
+        tab1.style.display = 'block';
       }
     }
 
-    document.addEventListener('dblclick', toggleTab);
-    document.addEventListener('pointerdown', e => {
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTap;
-      if (tapLength < 800 && tapLength > 0) {
-        toggleTab();
-        e.preventDefault();
-      }
-      lastTap = currentTime;
-    });
   </script>
 </body>
 </html>

@@ -194,9 +194,10 @@
       <div class="form-group">
         <label for="client">Client:</label>
         <div style="display: flex; align-items: center;">
-          <!-- Client Input and Add Button -->
-          <input type="text" id="client" placeholder="Enter Client Name" oninput="suggestClient()" style="flex: 75%; padding: 4px 8px; font-size: 12px;">
-          <button type="button" onclick="addClient()" style="flex: 25%; padding: 4px 8px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add</button>
+          <!-- Client Input and Add/Remove Buttons -->
+          <input type="text" id="client" placeholder="Enter Client Name" oninput="suggestClient()" style="flex: 65%; padding: 4px 8px; font-size: 12px;">
+          <button type="button" onclick="addClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add</button>
+          <button type="button" onclick="removeClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
         </div>
         <div id="client-suggestions" style="display: none;"></div>
       </div>
@@ -261,6 +262,21 @@
           <tbody></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- Tab 3 (Removed Clients) -->
+  <div id="tab3" class="tab" style="display:none;">
+    <h1>Removed Clients</h1>
+    <div class="scrollable">
+      <table id="removed-clients-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
@@ -451,14 +467,21 @@
     function toggleTab() {
       const tab1 = document.getElementById('tab1');
       const tab2 = document.getElementById('tab2');
+      const tab3 = document.getElementById('tab3');
+      
       if (tab1.style.display !== 'none') {
         tab1.style.display = 'none';
         tab2.style.display = 'block';
         renderClientDropdown();
         renderClientActivity();
+      } else if (tab2.style.display !== 'none') {
+        tab2.style.display = 'none';
+        tab3.style.display = 'block';
+        loadRemovedClients();
       } else {
         tab1.style.display = 'block';
         tab2.style.display = 'none';
+        tab3.style.display = 'none';
       }
     }
 
@@ -473,18 +496,60 @@
       lastTap = currentTime;
     });
 
-    // Function to add the client to the suggestions list and clear the input field
-    function addClient() {
+    // ---------------- Remove Client Logic
+    function removeClient() {
       const clientInput = document.getElementById('client');
       const clientName = clientInput.value.trim();
-      if (clientName && !clientHistory.includes(clientName)) {
-        clientHistory.push(clientName);
-        suggestClient(); // Update suggestions
-        clientInput.value = ''; // Clear input
-        saveToStorage(); // Save changes to localStorage
+
+      if (clientName && clientHistory.includes(clientName)) {
+        // Remove client from current history
+        clientHistory = clientHistory.filter(client => client !== clientName);
+        
+        // Also remove associated logs from logData
+        logData = logData.filter(log => log.client !== clientName);
+
+        // Save updated data to localStorage
+        saveToStorage();
+
+        // Update History Table and Client Activity
+        updateHistoryTable();
+        renderClientDropdown();
+
+        // Move the removed client to Tab 3
+        moveToTab3(clientName);
+
+        // Clear the input
+        clientInput.value = '';
       } else {
-        alert("Client is either empty or already added!");
+        alert("Client not found!");
       }
+    }
+
+    // Move client to Tab 3
+    function moveToTab3(clientName) {
+      const previousClients = JSON.parse(localStorage.getItem('removedClients')) || [];
+      if (!previousClients.includes(clientName)) {
+        previousClients.push(clientName);
+        localStorage.setItem('removedClients', JSON.stringify(previousClients));
+      }
+
+      renderRemovedClients();
+    }
+
+    // Render Removed Clients in Tab 3
+    function renderRemovedClients() {
+      const removedClients = JSON.parse(localStorage.getItem('removedClients')) || [];
+      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      removedClients.forEach(client => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = client;
+      });
+    }
+
+    // Load removed clients into Tab 3
+    function loadRemovedClients() {
+      renderRemovedClients();
     }
   </script>
 </body>

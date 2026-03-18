@@ -315,6 +315,37 @@
       clearInputFields();
     }
 
+    // Add client to the list
+    function addClient() {
+      const clientInput = document.getElementById('client');
+      const clientName = clientInput.value.trim();
+      if (clientName && !clientHistory.includes(clientName)) {
+        clientHistory.push(clientName);
+        suggestClient(); // Update suggestions
+        clientInput.value = ''; // Clear input
+        saveToStorage(); // Save changes to localStorage
+        renderClientDropdown(); // Update client dropdown in Tab 2
+      } else {
+        alert("Client is either empty or already added!");
+      }
+    }
+
+    // Remove client and move to removed list
+    function removeClient() {
+      const clientInput = document.getElementById('client').value.trim();
+      if (clientInput && clientHistory.includes(clientInput)) {
+        removedClients.push(clientInput);
+        clientHistory = clientHistory.filter(c => c !== clientInput);
+        saveToStorage(); // Save changes to localStorage
+        renderClientDropdown(); // Update client dropdown in Tab 2
+        updateHistoryTable(); // Refresh the history table in Tab 1
+        renderRemovedClients(); // Update the removed client list in Tab 3
+        document.getElementById('client').value = ''; // Clear input field
+      } else {
+        alert("Client not found in the list!");
+      }
+    }
+
     // Clear input fields
     function clearInputFields() {
       document.getElementById('date').value = '';
@@ -323,6 +354,37 @@
       document.getElementById('status').value = 'new';
       document.getElementById('update').value = '';
       document.getElementById('update-container').style.display = 'none';
+    }
+
+    // Render Client Dropdown in Tab 2
+    function renderClientDropdown() {
+      const select = document.getElementById('client-select');
+      select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    // Render Client Activity in Tab 2
+    function renderClientActivity() {
+      const client = document.getElementById('client-select').value;
+      const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      const clientLogs = logData.filter(l => l.client === client);
+      clientLogs.forEach(log => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = log.date;
+        row.insertCell(1).innerText = log.activity;
+        row.insertCell(2).innerText = log.update;
+        row.insertCell(3).innerText = log.status;
+      });
+    }
+
+    // Render Removed Clients in Tab 3
+    function renderRemovedClients() {
+      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      removedClients.forEach(client => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = client;
+      });
     }
 
     // Save data to localStorage
@@ -368,8 +430,6 @@
         // Actions column
         const actions = row.insertCell(5);
         actions.classList.add('action-buttons');
-
-        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.classList.add('delete-button');
@@ -379,29 +439,15 @@
       });
     }
 
-    // Delete log and remove from history
+    // Delete log
     function deleteLog(index) {
       if (confirm('Are you sure?')) {
-        const log = logData[index];
-        removedClients.push(log.client);
         logData.splice(index, 1);
         saveToStorage();
         updateHistoryTable();
-        renderRemovedClients();
+        renderClientActivity();
       }
     }
-
-    // Render removed clients
-    function renderRemovedClients() {
-      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
-      tbody.innerHTML = '';
-      removedClients.forEach(client => {
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = client;
-      });
-    }
-
-    // ---------------- (Continue your previous functionality...)
   </script>
 </body>
 </html>

@@ -311,7 +311,12 @@
       updateHistoryTable();
       renderClientDropdown();
 
-      // Reset form
+      // Clear all fields after pressing Enter
+      clearInputFields();
+    }
+
+    // Clear input fields
+    function clearInputFields() {
       document.getElementById('date').value = '';
       document.getElementById('client').value = '';
       document.getElementById('activity').value = '';
@@ -364,7 +369,7 @@
         const actions = row.insertCell(5);
         actions.classList.add('action-buttons');
 
-        // Edit and Delete buttons
+        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.classList.add('delete-button');
@@ -374,7 +379,7 @@
       });
     }
 
-    // Delete log
+    // Delete log and remove from history
     function deleteLog(index) {
       if (confirm('Are you sure?')) {
         const log = logData[index];

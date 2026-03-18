@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Work Log</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #f4f4f4;
   padding: 20px;
 }
@@ -28,11 +29,6 @@ h1 {
   color: white;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-}
-
-.tab-buttons button.active {
-  background-color: #4CAF50;
 }
 
 /* FORM */
@@ -41,7 +37,6 @@ h1 {
   padding: 10px;
   max-width: 500px;
   margin: auto;
-  margin-bottom: 20px;
 }
 
 input, select {
@@ -60,40 +55,39 @@ table {
 th, td {
   border: 1px solid #ccc;
   padding: 8px;
-  text-align: left;
 }
 
 th {
   background: green;
   color: white;
 }
-
-.new-activity {
-  font-weight: bold;
-}
 </style>
 </head>
+
 <body>
 
-<!-- TAB 1: Work Log -->
+<!-- TAB 1 -->
 <div id="tab1">
   <h1>Work Log</h1>
 
   <div class="tab-buttons">
-    <button id="tab1-btn" class="active" onclick="showTab(1)">Activity History</button>
-    <button id="tab2-btn" onclick="showTab(2)">Client Activity</button>
+    <button onclick="showTab(1)">Activity History</button>
+    <button onclick="showTab(2)">Client Activity</button>
   </div>
 
   <div class="form-container">
     <input type="date" id="date">
     <input type="text" id="client" placeholder="Client">
     <input type="text" id="activity" placeholder="Activity">
+
     <select id="status">
       <option value="new">New</option>
       <option value="ongoing">On Going</option>
       <option value="done">Done</option>
     </select>
+
     <input type="text" id="update" placeholder="Update (optional)">
+
     <button onclick="saveLog()">SAVE</button>
   </div>
 
@@ -111,13 +105,13 @@ th {
   </table>
 </div>
 
-<!-- TAB 2: Client Activity -->
+<!-- TAB 2 -->
 <div id="tab2" style="display:none;">
   <h1>Client Activity</h1>
 
   <div class="tab-buttons">
     <button onclick="showTab(1)">Activity History</button>
-    <button class="active" onclick="showTab(2)">Client Activity</button>
+    <button onclick="showTab(2)">Client Activity</button>
   </div>
 
   <select id="clientSelect" onchange="showClientData()"></select>
@@ -136,69 +130,86 @@ th {
 </div>
 
 <script>
-// ------------------- DATA
 let logs = JSON.parse(localStorage.getItem("logs")) || [];
 
-// ------------------- TAB SWITCH
+/* SWITCH TAB */
 function showTab(tab) {
-  const tab1 = document.getElementById("tab1");
-  const tab2 = document.getElementById("tab2");
-  const btn1 = document.getElementById("tab1-btn");
-  const btn2 = document.getElementById("tab2-btn");
+  document.getElementById("tab1").style.display = tab === 1 ? "block" : "none";
+  document.getElementById("tab2").style.display = tab === 2 ? "block" : "none";
 
-  if(tab === 1){
-    tab1.style.display = "block";
-    tab2.style.display = "none";
-    btn1.classList.add("active");
-    btn2.classList.remove("active");
-  } else {
-    tab1.style.display = "none";
-    tab2.style.display = "block";
-    btn1.classList.remove("active");
-    btn2.classList.add("active");
-    loadClients();
-  }
+  if (tab === 2) loadClients();
 }
 
-// ------------------- SAVE LOG
+/* SAVE DATA */
 function saveLog() {
   const date = document.getElementById("date").value;
-  const client = document.getElementById("client").value.trim();
-  const activity = document.getElementById("activity").value.trim();
+  const client = document.getElementById("client").value;
+  const activity = document.getElementById("activity").value;
   const status = document.getElementById("status").value;
-  const update = document.getElementById("update").value.trim();
+  const update = document.getElementById("update").value;
 
-  if(!date || !client || !activity){
+  if (!date || !client || !activity) {
     alert("Fill all fields!");
     return;
   }
 
   logs.push({ date, client, activity, status, update });
+
   localStorage.setItem("logs", JSON.stringify(logs));
 
   renderTable();
   clearForm();
 }
 
-// ------------------- RENDER HISTORY TABLE
+/* DISPLAY TABLE */
 function renderTable() {
   const tbody = document.getElementById("history");
   tbody.innerHTML = "";
+
   logs.forEach(log => {
-    const row = document.createElement("tr");
-    if(log.status === "new") row.classList.add("new-activity");
-    row.innerHTML = `
-      <td>${log.date}</td>
-      <td>${log.client}</td>
-      <td>${log.activity}</td>
-      <td>${log.status}</td>
-      <td>${log.update}</td>
+    tbody.innerHTML += `
+      <tr>
+        <td>${log.date}</td>
+        <td>${log.client}</td>
+        <td>${log.activity}</td>
+        <td>${log.status}</td>
+        <td>${log.update}</td>
+      </tr>
     `;
-    tbody.appendChild(row);
   });
 }
 
-// ------------------- CLEAR FORM
+/* LOAD CLIENT DROPDOWN */
+function loadClients() {
+  const select = document.getElementById("clientSelect");
+
+  let clients = [...new Set(logs.map(l => l.client))];
+
+  select.innerHTML = clients.map(c => `<option>${c}</option>`).join("");
+
+  showClientData();
+}
+
+/* SHOW CLIENT DATA */
+function showClientData() {
+  const client = document.getElementById("clientSelect").value;
+  const tbody = document.getElementById("clientTable");
+
+  tbody.innerHTML = "";
+
+  logs.filter(l => l.client === client).forEach(l => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${l.date}</td>
+        <td>${l.activity}</td>
+        <td>${l.status}</td>
+        <td>${l.update}</td>
+      </tr>
+    `;
+  });
+}
+
+/* CLEAR FORM */
 function clearForm() {
   document.getElementById("date").value = "";
   document.getElementById("client").value = "";
@@ -206,34 +217,9 @@ function clearForm() {
   document.getElementById("update").value = "";
 }
 
-// ------------------- LOAD CLIENTS
-function loadClients() {
-  const select = document.getElementById("clientSelect");
-  const clients = [...new Set(logs.map(l => l.client))];
-  select.innerHTML = clients.map(c => `<option>${c}</option>`).join("");
-  showClientData();
-}
-
-// ------------------- SHOW CLIENT DATA
-function showClientData() {
-  const client = document.getElementById("clientSelect").value;
-  const tbody = document.getElementById("clientTable");
-  tbody.innerHTML = "";
-  logs.filter(l => l.client === client).forEach(l => {
-    const row = document.createElement("tr");
-    if(l.status === "new") row.classList.add("new-activity");
-    row.innerHTML = `
-      <td>${l.date}</td>
-      <td>${l.activity}</td>
-      <td>${l.status}</td>
-      <td>${l.update}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
-
-// ------------------- INITIAL LOAD
+/* LOAD ON START */
 renderTable();
 </script>
+
 </body>
 </html>

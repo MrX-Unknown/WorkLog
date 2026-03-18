@@ -281,8 +281,122 @@
     }
 
     // ---------------- (Rest of your functions from the original code)
-    // Suggest and save functions for Activity Log (Tab 1)
-    // (Refer to your previous code logic for adding/removing clients, saving logs, etc.)
+    let clientHistory = [], activityHistory = {}, logData = [], removedClients = [];
+
+    // Save log to localStorage
+    function saveLog() {
+      const date = document.getElementById('date').value;
+      const client = document.getElementById('client').value;
+      const activity = document.getElementById('activity').value;
+      const status = document.getElementById('status').value;
+      const updateValue = document.getElementById('update').value;
+
+      if (!date || !client || !activity || !status) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      if (!clientHistory.includes(client)) clientHistory.push(client);
+      if (!activityHistory[client]) activityHistory[client] = [];
+      if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
+
+      const logEntry = { date, client, activity, status, update: updateValue };
+      logData.push(logEntry);
+
+      if (logData.length > 15) logData.shift(); // Limit to last 15 entries
+
+      // Save the updated data to localStorage
+      saveToStorage();
+
+      updateHistoryTable();
+      renderClientDropdown();
+
+      // Reset form
+      document.getElementById('date').value = '';
+      document.getElementById('client').value = '';
+      document.getElementById('activity').value = '';
+      document.getElementById('status').value = 'new';
+      document.getElementById('update').value = '';
+      document.getElementById('update-container').style.display = 'none';
+    }
+
+    // Save data to localStorage
+    function saveToStorage() {
+      localStorage.setItem('clientHistory', JSON.stringify(clientHistory));
+      localStorage.setItem('activityHistory', JSON.stringify(activityHistory));
+      localStorage.setItem('logData', JSON.stringify(logData));
+      localStorage.setItem('removedClients', JSON.stringify(removedClients));
+    }
+
+    // Load data from localStorage
+    function loadFromStorage() {
+      const storedClientHistory = localStorage.getItem('clientHistory');
+      const storedActivityHistory = localStorage.getItem('activityHistory');
+      const storedLogData = localStorage.getItem('logData');
+      const storedRemovedClients = localStorage.getItem('removedClients');
+
+      if (storedClientHistory) clientHistory = JSON.parse(storedClientHistory);
+      if (storedActivityHistory) activityHistory = JSON.parse(storedActivityHistory);
+      if (storedLogData) logData = JSON.parse(storedLogData);
+      if (storedRemovedClients) removedClients = JSON.parse(storedRemovedClients);
+
+      updateHistoryTable();
+      renderClientDropdown();
+    }
+
+    window.onload = function () {
+      loadFromStorage();
+    };
+
+    // Update history table
+    function updateHistoryTable() {
+      const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      logData.forEach((log, index) => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = log.date;
+        row.insertCell(1).innerText = log.client;
+        row.insertCell(2).innerText = log.activity;
+        row.insertCell(3).innerText = log.status;
+        row.insertCell(4).innerText = log.update;
+
+        // Actions column
+        const actions = row.insertCell(5);
+        actions.classList.add('action-buttons');
+
+        // Edit and Delete buttons
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerText = 'Delete';
+        deleteBtn.classList.add('delete-button');
+        deleteBtn.onclick = () => deleteLog(index);
+
+        actions.appendChild(deleteBtn);
+      });
+    }
+
+    // Delete log
+    function deleteLog(index) {
+      if (confirm('Are you sure?')) {
+        const log = logData[index];
+        removedClients.push(log.client);
+        logData.splice(index, 1);
+        saveToStorage();
+        updateHistoryTable();
+        renderRemovedClients();
+      }
+    }
+
+    // Render removed clients
+    function renderRemovedClients() {
+      const tbody = document.getElementById('removed-clients-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      removedClients.forEach(client => {
+        const row = tbody.insertRow();
+        row.insertCell(0).innerText = client;
+      });
+    }
+
+    // ---------------- (Continue your previous functionality...)
   </script>
 </body>
 </html>

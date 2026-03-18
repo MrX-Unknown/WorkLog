@@ -179,7 +179,7 @@
       <div class="form-group">
         <label for="client">Client:</label>
         <div style="display: flex; align-items: center;">
-          <input type="text" id="client" placeholder="Enter Client Name" oninput="suggestClient()" style="flex: 65%; padding: 4px 8px; font-size: 12px;">
+          <input type="text" id="client" placeholder="Enter Client Name" oninput="suggestClient()" onfocus="suggestClient()" style="flex: 65%; padding: 4px 8px; font-size: 12px;">
           <button type="button" onclick="addClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add</button>
           <button type="button" onclick="removeClient()" style="flex: 15%; padding: 4px 8px; font-size: 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Remove</button>
         </div>
@@ -299,13 +299,13 @@
       }
     }
 
-    // Show client suggestions while typing
+    // Show client suggestions while typing or when focused
     function suggestClient() {
       const input = document.getElementById('client').value;
       const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
       const box = document.getElementById('client-suggestions');
       box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
-      box.style.display = suggestions.length ? 'block' : 'none';
+      box.style.display = suggestions.length || input.length > 0 ? 'block' : 'none';
     }
 
     // Select client from suggestions

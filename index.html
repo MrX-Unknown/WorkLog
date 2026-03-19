@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,116 +6,118 @@
   <title>Work Log</title>
 
   <style>
+    /* Title Styling */
+    #title {
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #f4f4f4;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 64px;
-      font-weight: bold;
+    #work-log-section, #client-activity-tab, #activity-history {
+      margin-bottom: 20px;
     }
 
-    .form-container {
-      max-width: 600px;
-      margin: 20px auto;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    #work-log-section label,
+    #client-activity-tab label {
+      margin-right: 10px;
     }
 
-    .form-group {
+    #work-log-section input,
+    #work-log-section select,
+    #client-activity-tab input,
+    #client-activity-tab select {
       margin-bottom: 10px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 3px;
-      font-size: 12px;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 4px 8px;
-      font-size: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
+      padding: 5px;
       height: 26px;
     }
 
-    .history-container, .client-activity-container, .removed-clients-container {
-      margin-top: 30px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      overflow-x: auto;
+    button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
 
-    table {
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #history-table, #client-activity-table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
+      margin-top: 20px;
     }
 
-    th, td {
+    #history-table th, #client-activity-table th,
+    #history-table td, #client-activity-table td {
+      border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
-      word-wrap: break-word;
     }
 
-    thead th {
-      position: sticky;
-      top: 0;
-      background-color: #4CAF50;
-      color: white;
-      z-index: 1;
-    }
-
-    tbody tr:nth-child(even) { background-color: #f9f9f9; }
-    tbody tr:nth-child(odd) { background-color: #ffffff; }
-
-    tbody tr:hover { background-color: #e0f7fa; }
-
-    .scrollable {
-      max-height: 250px;
+    /* Scrollable container for activity history if rows exceed 15 */
+    #history-table-container {
+      max-height: 300px;
       overflow-y: auto;
-      border: 1px solid #ccc;
-      border-radius: 6px;
     }
 
-    .tab { display: none; }
-
-    #client-activity-table th, #client-activity-table td {
-      text-align: left;
+    /* Suggestions Dropdown Styling */
+    ul, #client-suggestions, #activity-suggestions {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
       border: 1px solid #ddd;
-      padding: 6px;
+      width: 200px;
+      position: absolute;
+      background-color: white;
+      max-height: 100px;
+      overflow-y: scroll;
+      z-index: 10;
     }
 
-    #client-activity-table th {
-      background-color: #4CAF50;
-      color: white;
-      position: sticky;
-      top: 0;
-    }
-
-    #client-suggestions div, #activity-suggestions div {
-      padding: 6px;
+    li, #client-suggestions div, #activity-suggestions div {
+      padding: 5px;
       cursor: pointer;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      margin: 2px 0;
     }
 
-    #client-suggestions div:hover, #activity-suggestions div:hover {
-      background-color: #e0e0e0;
+    li:hover, #client-suggestions div:hover, #activity-suggestions div:hover {
+      background-color: #f0f0f0;
     }
 
+    /* Bold "New" activity rows */
+    .new-activity {
+      font-weight: bold;
+    }
+
+    /* Align client input row */
+    .client-row {
+      display: flex;
+      gap: 5px;
+      width: 100%;
+    }
+
+    .client-row input {
+      flex: 1;
+    }
+
+    /* Ensure all inputs match height */
+    .form-group input,
+    .form-group select {
+      height: 26px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Tab buttons */
     .tab-button {
       display: inline-block;
       padding: 10px 20px;
@@ -132,26 +133,24 @@
     .tab-button:hover { background-color: #45a049; }
     .active-tab-button { background-color: #45a049; }
 
-    .client-row {
-      display: flex;
-      width: 100%;
-    }
+    .tab { display: none; }
 
-    .client-row input {
-      width: 100%;
-      height: 26px;
+    .scrollable {
+      max-height: 250px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Work Log</h1>
+<h1 id="title">Work Log</h1>
 
 <div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
-  <button class="tab-button" onclick="showTab(3)">Removed Log</button>
 </div>
 
 <!-- TAB 1 -->
@@ -163,17 +162,15 @@
       <input type="date" id="date">
     </div>
 
-    <div class="form-group">
+    <div class="form-group client-row">
       <label>Client:</label>
-      <div class="client-row">
-        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
-      </div>
+      <input type="text" id="client" placeholder="Enter Client" oninput="suggestClient()" onfocus="suggestClient()">
       <div id="client-suggestions" style="display:none;"></div>
     </div>
 
     <div class="form-group">
       <label>Activity:</label>
-      <input type="text" id="activity" oninput="suggestActivity()">
+      <input type="text" id="activity" placeholder="Enter Activity" oninput="suggestActivity()">
       <div id="activity-suggestions" style="display:none;"></div>
     </div>
 
@@ -188,7 +185,7 @@
 
     <div class="form-group" id="update-container" style="display:none;">
       <label>Update:</label>
-      <input type="text" id="update">
+      <input type="text" id="update" placeholder="Enter Update">
     </div>
 
     <div class="form-group">
@@ -197,22 +194,20 @@
 
   </div>
 
-  <div class="history-container">
-    <div class="scrollable">
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Client</th>
-            <th>Activity</th>
-            <th>Status</th>
-            <th>Update</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+  <div class="history-container scrollable">
+    <table id="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Activity</th>
+          <th>Status</th>
+          <th>Update</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 </div>
 
@@ -237,186 +232,179 @@
   </div>
 </div>
 
-<!-- TAB 3 -->
-<div id="tab3" class="tab">
-  <div class="removed-clients-container">
-    <div class="scrollable">
-      <table id="removed-clients-table">
-        <thead><tr><th>Client</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
 <script>
-let clientHistory = [], activityHistory = {}, logData = [], removedClients = [];
+let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
+let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
+let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
+let lastSelectedClient = null;
 
-/* TAB */
-function showTab(n){
-  document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
-  document.getElementById('tab'+n).style.display='block';
+// Initialize the UI
+updateHistoryTable();
+renderClientDropdown();
+renderClientActivity();
+
+// ---------------- Suggestions
+function suggestClient() {
+  const input = document.getElementById('client').value;
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
+  const box = document.getElementById('client-suggestions');
+  box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
 }
 
-/* SAVE LOG */
-function saveLog(){
-  const date = document.getElementById("date").value;
-  const client = clientInput.value.trim();
-  const activity = activityInput.value.trim();
-  const status = statusInput.value;
-  const update = updateInput.value;
+function selectClient(client) {
+  document.getElementById('client').value = client;
+  document.getElementById('client-suggestions').style.display = 'none';
+  suggestActivity();
+}
 
-  if(!date || !client || !activity){
-    alert("Fill required fields");
+function suggestActivity() {
+  const input = document.getElementById('activity').value;
+  const client = document.getElementById('client').value;
+  if (activityHistory[client]) {
+    const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
+    const box = document.getElementById('activity-suggestions');
+    box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+    box.style.display = suggestions.length ? 'block' : 'none';
+  }
+}
+
+function selectActivity(activity) {
+  document.getElementById('activity').value = activity;
+  document.getElementById('activity-suggestions').style.display = 'none';
+}
+
+// ---------------- Status toggle
+document.getElementById('status').addEventListener('change', function() {
+  const uc = document.getElementById('update-container');
+  uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
+  if (this.value !== 'ongoing') document.getElementById('update').value = '';
+});
+
+// ---------------- Save log
+function saveLog() {
+  const date = document.getElementById('date').value;
+  const client = document.getElementById('client').value.trim();
+  const activity = document.getElementById('activity').value.trim();
+  const status = document.getElementById('status').value;
+  const updateValue = document.getElementById('update').value.trim();
+
+  if (!date || !client || !activity || !status) {
+    alert('Please fill all fields');
     return;
   }
 
-  if (!clientHistory.includes(client)) {
-    clientHistory.push(client);
-  }
+  if (!clientHistory.includes(client)) clientHistory.push(client);
+  if (!activityHistory[client]) activityHistory[client] = [];
+  if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
-  logData.push({date,client,activity,status,update});
+  logData.push({ date, client, activity, status, update: updateValue });
+  if (logData.length > 15) logData.shift();
 
-  if(!activityHistory[client]) activityHistory[client]=[];
-  if(!activityHistory[client].includes(activity)){
-    activityHistory[client].push(activity);
-  }
-
-  saveStorage();
-  updateHistoryTable();
-  renderClientDropdown();
-
-  activityInput.value="";
-  updateInput.value="";
-}
-
-/* TABLE */
-function updateHistoryTable(){
-  const tbody = document.querySelector("#history-table tbody");
-  tbody.innerHTML="";
-
-  logData.forEach((l,i)=>{
-    let row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${l.date}</td>
-      <td>${l.client}</td>
-      <td>${l.activity}</td>
-      <td>${l.status}</td>
-      <td>${l.update}</td>
-      <td><button onclick="deleteLog(${i})">Delete</button></td>
-    `;
-  });
-}
-
-function deleteLog(i){
-  logData.splice(i,1);
-  saveStorage();
-  updateHistoryTable();
-}
-
-/* CLIENT */
-const clientInput = document.getElementById("client");
-
-/* SUGGEST CLIENT */
-function suggestClient(){
-  const input = clientInput.value.toLowerCase();
-  const box = document.getElementById("client-suggestions");
-
-  let list = clientHistory.filter(c=>c.toLowerCase().includes(input));
-
-  box.innerHTML = list.map(c=>`<div onclick="selectClient('${c}')">${c}</div>`).join('');
-  box.style.display = list.length ? 'block':'none';
-}
-
-function selectClient(c){
-  clientInput.value = c;
-  document.getElementById("client-suggestions").style.display='none';
-}
-
-/* ACTIVITY */
-const activityInput = document.getElementById("activity");
-
-function suggestActivity(){
-  const client = clientInput.value;
-  const box = document.getElementById("activity-suggestions");
-
-  if(!activityHistory[client]) return;
-
-  let list = activityHistory[client];
-
-  box.innerHTML = list.map(a=>`<div onclick="selectActivity('${a}')">${a}</div>`).join('');
-  box.style.display = list.length ? 'block':'none';
-}
-
-function selectActivity(a){
-  activityInput.value = a;
-  document.getElementById("activity-suggestions").style.display='none';
-}
-
-/* DROPDOWN */
-function renderClientDropdown(){
-  const select = document.getElementById("client-select");
-  select.innerHTML = clientHistory.map(c=>`<option>${c}</option>`).join("");
-}
-
-/* CLIENT ACTIVITY */
-function renderClientActivity(){
-  const c = document.getElementById("client-select").value;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML="";
-
-  logData.filter(l=>l.client===c).forEach(l=>{
-    let row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${l.date}</td>
-      <td>${l.activity}</td>
-      <td>${l.update}</td>
-      <td>${l.status}</td>
-    `;
-  });
-}
-
-/* REMOVED */
-function renderRemoved(){
-  const tbody = document.querySelector("#removed-clients-table tbody");
-  tbody.innerHTML="";
-  removedClients.forEach(c=>{
-    let row = tbody.insertRow();
-    row.innerHTML=`<td>${c}</td>`;
-  });
-}
-
-/* STATUS */
-const statusInput = document.getElementById("status");
-const updateInput = document.getElementById("update");
-
-statusInput.addEventListener("change",()=>{
-  document.getElementById("update-container").style.display =
-    statusInput.value==="new" ? "none":"block";
-});
-
-/* STORAGE */
-function saveStorage(){
-  localStorage.setItem("clients",JSON.stringify(clientHistory));
-  localStorage.setItem("logs",JSON.stringify(logData));
-  localStorage.setItem("activities",JSON.stringify(activityHistory));
-  localStorage.setItem("removed",JSON.stringify(removedClients));
-}
-
-function loadStorage(){
-  clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
-  logData = JSON.parse(localStorage.getItem("logs")) || [];
-  activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
-  removedClients = JSON.parse(localStorage.getItem("removed")) || [];
+  localStorage.setItem('workLogs', JSON.stringify(logData));
+  localStorage.setItem('clients', JSON.stringify(clientHistory));
+  localStorage.setItem('activities', JSON.stringify(activityHistory));
 
   updateHistoryTable();
   renderClientDropdown();
-  renderRemoved();
+
+  // Reset form
+  document.getElementById('date').value = '';
+  document.getElementById('client').value = '';
+  document.getElementById('activity').value = '';
+  document.getElementById('status').value = 'new';
+  document.getElementById('update').value = '';
+  document.getElementById('update-container').style.display = 'none';
 }
 
-window.onload = loadStorage;
+// ---------------- Update history table
+function updateHistoryTable() {
+  const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  logData.forEach((log, index) => {
+    const row = tbody.insertRow();
+    row.insertCell(0).innerText = log.date;
+    row.insertCell(1).innerText = log.client;
+    row.insertCell(2).innerText = log.activity;
+    row.insertCell(3).innerText = log.status;
+    row.insertCell(4).innerText = log.update;
+
+    const actions = row.insertCell(5);
+    const editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.onclick = () => editLog(index);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerText = 'Delete';
+    deleteBtn.onclick = () => deleteLog(index);
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+  });
+}
+
+// ---------------- Edit/Delete
+function editLog(index) {
+  const log = logData[index];
+  document.getElementById('date').value = log.date;
+  document.getElementById('client').value = log.client;
+  document.getElementById('activity').value = log.activity;
+  document.getElementById('status').value = log.status;
+  if (log.status === 'ongoing') {
+    document.getElementById('update-container').style.display = 'block';
+    document.getElementById('update').value = log.update;
+  }
+  deleteLog(index);
+}
+
+function deleteLog(index) {
+  if (confirm('Are you sure?')) {
+    logData.splice(index, 1);
+    localStorage.setItem('workLogs', JSON.stringify(logData));
+    updateHistoryTable();
+    renderClientActivity();
+  }
+}
+
+// ---------------- Client Activity tab
+function renderClientDropdown() {
+  const select = document.getElementById('client-select');
+  const prev = lastSelectedClient;
+  select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join('');
+  if (prev) select.value = prev;
+}
+
+function renderClientActivity() {
+  const client = document.getElementById('client-select').value;
+  lastSelectedClient = client;
+  const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
+  tbody.innerHTML = '';
+  const clientLogs = logData.filter(l => l.client === client);
+  const grouped = {};
+  clientLogs.forEach(l => {
+    if (!grouped[l.activity]) grouped[l.activity] = [];
+    grouped[l.activity].push(l);
+  });
+  Object.keys(grouped).forEach(act => {
+    grouped[act].forEach(l => {
+      const row = tbody.insertRow();
+      row.insertCell(0).innerText = l.date;
+      row.insertCell(1).innerText = l.activity;
+      row.insertCell(2).innerText = l.update;
+      row.insertCell(3).innerText = l.status;
+      if (l.status === 'new') row.style.fontWeight = 'bold';
+    });
+  });
+}
+
+// ---------------- Tab switch
+function showTab(n) {
+  document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
+  document.getElementById('tab'+n).style.display = 'block';
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active-tab-button'));
+  document.querySelectorAll('.tab-button')[n-1].classList.add('active-tab-button');
+}
 </script>
 
 </body>
 </html>
-```

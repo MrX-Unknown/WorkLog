@@ -1,8 +1,8 @@
-// ---------------- Data with persistence (add CEM and Lawyer)
+// ---------------- Data with persistence
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
-let cemHistory = JSON.parse(localStorage.getItem("cem")) || [];  // Store CEM data
-let lawyerHistory = JSON.parse(localStorage.getItem("lawyers")) || [];  // Store Lawyer data
+let cemHistory = JSON.parse(localStorage.getItem("cem")) || [];
+let lawyerHistory = JSON.parse(localStorage.getItem("lawyers")) || [];
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
@@ -21,9 +21,9 @@ function showTab(tabNumber) {
 
   // Highlight active button
   document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active-tab-button"));
-  document.querySelectorAll(".tab-button")[tabNumber-1].classList.add("active-tab-button");
+  document.querySelectorAll(".tab-button")[tabNumber - 1].classList.add("active-tab-button");
 
-  if(tabNumber === 2) renderClientDropdown(), renderClientActivity();
+  if (tabNumber === 2) renderClientDropdown(), renderClientActivity();
 }
 
 // ---------------- Client auto-suggest (only shows existing data)
@@ -67,7 +67,7 @@ function selectLawyer(lawyer) {
   document.getElementById('lawyer-suggestions').style.display = 'none';
 }
 
-// ---------------- Save log (with CEM and Lawyer handling)
+// ---------------- Save log function (handling the data and reset)
 function saveLog() {
   const date = document.getElementById('date').value;
   const client = document.getElementById('client').value.trim();
@@ -77,40 +77,40 @@ function saveLog() {
   const status = document.getElementById('status').value;
   const updateVal = document.getElementById('update').value.trim();
 
-  if (!date || !client || !activity) { 
-    alert("Please fill all fields"); 
-    return; 
+  // Validation check: Ensure fields are filled
+  if (!date || !client || !activity) {
+    alert("Please fill all fields");
+    return;
   }
 
-  // Add to client history
+  // Add to histories
   if (!clientHistory.includes(client)) clientHistory.push(client);
-  // Add to CEM history
   if (cem && !cemHistory.includes(cem)) cemHistory.push(cem);
-  // Add to Lawyer history
   if (lawyer && !lawyerHistory.includes(lawyer)) lawyerHistory.push(lawyer);
 
-  // Add to activity history
   if (!activityHistory[client]) activityHistory[client] = [];
   if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
+  // Store new log
   logData.push({ date, client, cem, lawyer, activity, status, update: updateVal });
 
-  // Persist to localStorage if available
+  // Persist data to localStorage
   if (isLocalStorageAvailable()) {
     localStorage.setItem("clients", JSON.stringify(clientHistory));
     localStorage.setItem("activities", JSON.stringify(activityHistory));
-    localStorage.setItem("cem", JSON.stringify(cemHistory));  // Save CEM data
-    localStorage.setItem("lawyers", JSON.stringify(lawyerHistory));  // Save Lawyer data
+    localStorage.setItem("cem", JSON.stringify(cemHistory));
+    localStorage.setItem("lawyers", JSON.stringify(lawyerHistory));
     localStorage.setItem("workLogs", JSON.stringify(logData));
   } else {
     alert("LocalStorage is not available. Data will not persist.");
   }
 
+  // Refresh the history table and other dropdowns
   updateHistoryTable();
   renderClientDropdown();
   renderClientActivity();
 
-  // Reset form fields after saving data
+  // Call reset to clear all form fields
   resetFormFields();
 }
 
@@ -121,9 +121,9 @@ function resetFormFields() {
   document.getElementById('cem').value = '';
   document.getElementById('lawyer').value = '';
   document.getElementById('activity').value = '';
-  document.getElementById('status').value = 'new';
+  document.getElementById('status').value = 'new'; // Default status
   document.getElementById('update').value = '';
-  document.getElementById('update-container').style.display = 'none'; // Hide update field
+  document.getElementById('update-container').style.display = 'none'; // Hide Update field
 }
 
 // ---------------- Update history table (with CEM and Lawyer beside Date)

@@ -97,7 +97,6 @@ function deleteLog(index) {
   localStorage.setItem('workLogs', JSON.stringify(logData));
   updateHistoryTable();
   renderClientActivity();
-  removeDeletedClientFromData(logData[index].client);
 }
 
 // ------------------ Status toggle
@@ -109,9 +108,7 @@ document.getElementById('status').addEventListener('change', function() {
 // ------------------ Client Activity Tab
 function renderClientDropdown() {
   const select = document.getElementById('client-select');
-  // Only show clients that are still in the data
-  const validClients = clientHistory.filter(client => logData.some(log => log.client === client));
-  select.innerHTML = validClients.map(c=>`<option value="${c}">${c}</option>`).join('');
+  select.innerHTML = clientHistory.map(c=>`<option value="${c}">${c}</option>`).join('');
   if (lastSelectedClient) select.value = lastSelectedClient;
 }
 
@@ -131,84 +128,34 @@ function renderClientActivity() {
   });
 }
 
-// ------------------ Auto-suggest (Removed clients not in data)
+// ------------------ Auto-suggest
 function suggestClient() {
   const input = document.getElementById('client').value.toLowerCase();
   const box = document.getElementById('client-suggestions');
-  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input) && logData.some(log => log.client === c));
-  box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
+  const suggestions = clientHistory.filter(c=>c.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(c=>`<div onclick="selectClient('${c}')">${c}</div>`).join('');
+  box.style.display = suggestions.length?'block':'none';
 }
-
-function selectClient(c) {
-  document.getElementById('client').value = c;
-  document.getElementById('client-suggestions').style.display = 'none';
-  suggestActivity();
-}
-
-// ------------------ Auto-suggest for Activity
+function selectClient(c){document.getElementById('client').value=c;document.getElementById('client-suggestions').style.display='none'; suggestActivity();}
 function suggestActivity() {
   const client = document.getElementById('client').value;
   const input = document.getElementById('activity').value.toLowerCase();
   const box = document.getElementById('activity-suggestions');
-  if (!activityHistory[client]) return;
-  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
-  box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
+  if(!activityHistory[client]) return;
+  const suggestions = activityHistory[client].filter(a=>a.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(a=>`<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+  box.style.display = suggestions.length?'block':'none';
 }
+function selectActivity(a){document.getElementById('activity').value=a;document.getElementById('activity-suggestions').style.display='none';}
 
-function selectActivity(a) {
-  document.getElementById('activity').value = a;
-  document.getElementById('activity-suggestions').style.display = 'none';
-}
-
-// ------------------ Auto-suggest for CEM and Atty
-function suggestCEM() {
-  const input = document.getElementById('cem').value.toLowerCase();
-  const box = document.getElementById('cem-suggestions');
-  const suggestions = cemHistory.filter(c => c.toLowerCase().includes(input));
-  box.innerHTML = suggestions.map(c => `<div onclick="selectCEM('${c}')">${c}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
-}
-
-function selectCEM(c) {
-  document.getElementById('cem').value = c;
-  document.getElementById('cem-suggestions').style.display = 'none';
-}
-
-function suggestAtty() {
-  const input = document.getElementById('atty').value.toLowerCase();
-  const box = document.getElementById('atty-suggestions');
-  const suggestions = attyHistory.filter(a => a.toLowerCase().includes(input));
-  box.innerHTML = suggestions.map(a => `<div onclick="selectAtty('${a}')">${a}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
-}
-
-function selectAtty(a) {
-  document.getElementById('atty').value = a;
-  document.getElementById('atty-suggestions').style.display = 'none';
-}
-
-// ------------------ Remove Deleted Client Data from Client Suggestions
-function removeDeletedClientFromData(client) {
-  // Remove client from all activity history, CEM history, and Atty history
-  activityHistory = Object.fromEntries(
-    Object.entries(activityHistory).filter(([key]) => key !== client)
-  );
-  cemHistory = cemHistory.filter(cem => cem !== client);
-  attyHistory = attyHistory.filter(atty => atty !== client);
-
-  // Remove the client from clientHistory and re-save the data
-  clientHistory = clientHistory.filter(c => c !== client);
-  localStorage.setItem('clients', JSON.stringify(clientHistory));
-  localStorage.setItem('activities', JSON.stringify(activityHistory));
-  localStorage.setItem('cems', JSON.stringify(cemHistory));
-  localStorage.setItem('attys', JSON.stringify(attyHistory));
-  renderClientDropdown(); // Re-render the client dropdown for Tab 2
-}
+// Auto-suggest for CEM and Atty
+function suggestCEM(){const input=document.getElementById('cem').value.toLowerCase();const box=document.getElementById('cem-suggestions');const suggestions=cemHistory.filter(c=>c.toLowerCase().includes(input));box.innerHTML=suggestions.map(c=>`<div onclick="selectCEM('${c}')">${c}</div>`).join('');box.style.display=suggestions.length?'block':'none';}
+function selectCEM(c){document.getElementById('cem').value=c;document.getElementById('cem-suggestions').style.display='none';}
+function suggestAtty(){const input=document.getElementById('atty').value.toLowerCase();const box=document.getElementById('atty-suggestions');const suggestions=attyHistory.filter(a=>a.toLowerCase().includes(input));box.innerHTML=suggestions.map(a=>`<div onclick="selectAtty('${a}')">${a}</div>`).join('');box.style.display=suggestions.length?'block':'none';}
+function selectAtty(a){document.getElementById('atty').value=a;document.getElementById('atty-suggestions').style.display='none';}
 
 // ------------------ Initialize
-window.onload = function () {
+window.onload = function() {
   updateHistoryTable();
   renderClientDropdown();
   renderClientActivity();

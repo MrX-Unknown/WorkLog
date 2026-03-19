@@ -1,6 +1,4 @@
 // ---------------- DATA ----------------
-let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
-let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
@@ -24,10 +22,15 @@ function showTab(n){
 }
 
 // ---------------- CLIENT SUGGEST ----------------
+function getClientsInData() {
+  const clients = [...new Set(logData.map(l=>l.client))];
+  return clients;
+}
+
 function suggestClient() {
   const input = document.getElementById('client').value.toLowerCase();
   const box = document.getElementById('client-suggestions');
-  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
+  const suggestions = getClientsInData().filter(c => c.toLowerCase().includes(input));
   box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
@@ -44,12 +47,9 @@ function suggestActivity() {
   const client = document.getElementById('client').value;
   const box = document.getElementById('activity-suggestions');
 
-  if (!activityHistory[client]) {
-    box.style.display = 'none';
-    return;
-  }
-
-  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
+  const activities = logData.filter(l=>l.client===client).map(l=>l.activity);
+  const suggestions = [...new Set(activities)].filter(a => a.toLowerCase().includes(input));
+  
   box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
@@ -83,16 +83,10 @@ function saveLog(){
     return;
   }
 
-  if(!clientHistory.includes(client)) clientHistory.push(client);
-  if(!activityHistory[client]) activityHistory[client]=[];
-  if(!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
-
   logData.push({date, client, activity, status, update});
-  if(logData.length>15) logData.shift(); // keep last 15 logs
+  if(logData.length>15) logData.shift();
 
   localStorage.setItem("workLogs", JSON.stringify(logData));
-  localStorage.setItem("clients", JSON.stringify(clientHistory));
-  localStorage.setItem("activities", JSON.stringify(activityHistory));
 
   updateHistoryTable();
   renderClientDropdown();
@@ -163,7 +157,8 @@ function deleteLog(idx){
 function renderClientDropdown(){
   const select = document.getElementById('client-select');
   const prev = lastSelectedClient;
-  select.innerHTML = clientHistory.map(c=>`<option value="${c}">${c}</option>`).join('');
+  const clientsInData = [...new Set(logData.map(l=>l.client))];
+  select.innerHTML = clientsInData.map(c=>`<option value="${c}">${c}</option>`).join('');
   if(prev) select.value = prev;
 }
 

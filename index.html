@@ -1,116 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Work Log</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<h1 id="title">Work Log</h1>
-
-<!-- Tabs -->
-<div class="tabs">
+<div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
-  <button class="tab-button" onclick="showTab(3)">Removed Clients</button>
+  <button class="tab-button" onclick="showTab(3)">Removed Log</button>
 </div>
 
-<!-- TAB 1: Activity Log -->
-<div id="tab1" class="tab" style="display:block;">
-  <div class="form-container">
-
-    <div class="form-group">
-      <label for="date">Date:</label>
-      <input type="date" id="date">
-    </div>
-
-    <div class="form-group">
-      <label for="client">Client:</label>
-      <input type="text" id="client" placeholder="Select client" oninput="suggestClient()" onfocus="suggestClient()">
-      <div id="client-suggestions" class="suggestions"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="activity">Activity:</label>
-      <input type="text" id="activity" placeholder="Select activity" oninput="suggestActivity()">
-      <div id="activity-suggestions" class="suggestions"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="status">Status:</label>
-      <select id="status">
-        <option value="new">New</option>
-        <option value="ongoing">On Going</option>
-        <option value="done">Done</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="update-container">
-      <label for="update">Update:</label>
-      <input type="text" id="update" placeholder="Enter update for this activity">
-    </div>
-
-    <div class="form-group">
-      <button onclick="saveLog()">Enter</button>
-    </div>
-
-  </div>
-
-  <div class="history-container">
-    <div class="scrollable">
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Client</th>
-            <th>Activity</th>
-            <th>Status</th>
-            <th>Update</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+<!-- TAB 1 -->
+<div id="tab1" class="tab" style="display:block;"> <!-- Only Tab 1 visible -->
+  <!-- Form and history table go here -->
 </div>
 
-<!-- TAB 2: Client Log -->
-<div id="tab2" class="tab">
-  <div class="client-activity-container">
-    <label for="client-select">Select Client:</label>
-    <select id="client-select" onchange="renderClientActivity()"></select>
-
-    <div class="scrollable">
-      <table id="client-activity-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Activity</th>
-            <th>Update</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+<!-- TAB 2 -->
+<div id="tab2" class="tab" style="display:none;"> <!-- Hidden by default -->
+  <!-- Client Log content goes here -->
 </div>
 
-<!-- TAB 3: Removed Clients -->
-<div id="tab3" class="tab">
-  <div class="removed-clients-container">
-    <div class="scrollable">
-      <table id="removed-clients-table">
-        <thead><tr><th>Client</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+<!-- TAB 3 -->
+<div id="tab3" class="tab" style="display:none;"> <!-- Hidden by default -->
+  <!-- Removed Log content goes here -->
 </div>
-
-<script src="script.js"></script>
-</body>
-</html>

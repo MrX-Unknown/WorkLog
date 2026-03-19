@@ -1,129 +1,120 @@
-// ---------------- DATA AND STORAGE ----------------
+// ---------------- Work Log Data (with persistence)
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
-// ---------------- INITIALIZE UI ----------------
-window.onload = () => {
-  // Show only Tab 1 initially
-  document.querySelectorAll('.tab').forEach((tab, i) => {
-    tab.style.display = (i === 0) ? 'block' : 'none';
-  });
+// ---------------- DOM Elements
+const dateInput = document.getElementById("date");
+const clientInput = document.getElementById("client");
+const activityInput = document.getElementById("activity");
+const statusInput = document.getElementById("status");
+const updateInput = document.getElementById("update");
+const updateContainer = document.getElementById("update-container");
 
-  // Highlight first tab button
-  document.querySelectorAll('.tab-button').forEach((btn, i) => {
-    btn.classList.toggle('active-tab-button', i === 0);
+// ---------------- Tab Switching
+function showTab(tabNumber) {
+  document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
+  document.getElementById('tab' + tabNumber).style.display = 'block';
+  document.querySelectorAll('.tab-button').forEach((btn, idx) => {
+    btn.classList.toggle('active-tab-button', idx === tabNumber - 1);
   });
+}
 
+// Ensure default tab is Tab 1
+window.onload = function() {
+  showTab(1);
   updateHistoryTable();
   renderClientDropdown();
   renderClientActivity();
 };
 
-// ---------------- TAB SWITCH ----------------
-function showTab(tabNumber) {
-  document.querySelectorAll('.tab').forEach((tab, i) => {
-    tab.style.display = (i === tabNumber - 1) ? 'block' : 'none';
-  });
-
-  document.querySelectorAll('.tab-button').forEach((btn, i) => {
-    btn.classList.toggle('active-tab-button', i === tabNumber - 1);
-  });
-
-  if (tabNumber === 2) renderClientActivity();
-}
-
-// ---------------- CLIENT SUGGESTIONS ----------------
+// ---------------- Auto-suggest Client
 function suggestClient() {
-  const input = document.getElementById('client').value.trim();
-  const box = document.getElementById('client-suggestions');
-  if (!input) {
-    box.style.display = 'none';
-    return;
-  }
-
-  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
+  const input = clientInput.value.trim().toLowerCase();
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
+  const box = document.getElementById("client-suggestions");
   box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
 
 function selectClient(client) {
-  document.getElementById('client').value = client;
-  document.getElementById('client-suggestions').style.display = 'none';
-  suggestActivity(); // update activity suggestions for selected client
+  clientInput.value = client;
+  document.getElementById("client-suggestions").style.display = 'none';
+  suggestActivity(); // Show relevant activity suggestions
 }
 
-// ---------------- ACTIVITY SUGGESTIONS ----------------
+// ---------------- Auto-suggest Activity (per selected client)
 function suggestActivity() {
-  const input = document.getElementById('activity').value.trim();
-  const client = document.getElementById('client').value.trim();
-  const box = document.getElementById('activity-suggestions');
+  const input = activityInput.value.trim().toLowerCase();
+  const client = clientInput.value.trim();
+  if (!activityHistory[client]) return;
 
-  if (!client || !activityHistory[client]) {
-    box.style.display = 'none';
-    return;
-  }
-
-  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
+  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
+  const box = document.getElementById("activity-suggestions");
   box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
 
 function selectActivity(activity) {
-  document.getElementById('activity').value = activity;
-  document.getElementById('activity-suggestions').style.display = 'none';
+  activityInput.value = activity;
+  document.getElementById("activity-suggestions").style.display = 'none';
 }
 
-// ---------------- STATUS / UPDATE BOX ----------------
-document.getElementById('status').addEventListener('change', () => {
-  const uc = document.getElementById('update-container');
-  const status = document.getElementById('status').value;
-  uc.style.display = (status === 'ongoing') ? 'block' : 'none';
-  if (status !== 'ongoing') document.getElementById('update').value = '';
+// ---------------- Status toggle (show Update only if "On Going")
+statusInput.addEventListener("change", function() {
+  updateContainer.style.display = this.value === "ongoing" ? "block" : "none";
+  if (this.value !== "ongoing") updateInput.value = "";
 });
 
-// ---------------- SAVE LOG ----------------
+// ---------------- Save Log
 function saveLog() {
-  const date = document.getElementById('date').value;
-  const client = document.getElementById('client').value.trim();
-  const activity = document.getElementById('activity').value.trim();
-  const status = document.getElementById('status').value;
-  const updateVal = document.getElementById('update').value.trim();
+  const date = dateInput.value;
+  const client = clientInput.value.trim();
+  const activity = activityInput.value.trim();
+  const status = statusInput.value;
+  const updateValue = updateInput.value.trim();
 
   if (!date || !client || !activity || !status) {
-    alert('Please fill all required fields.');
+    alert("Please fill all required fields");
     return;
   }
 
-  // Add client and activity to history
+  // Only add client if it already exists in data
   if (!clientHistory.includes(client)) clientHistory.push(client);
+
+  // Add activity to client's activityHistory
   if (!activityHistory[client]) activityHistory[client] = [];
   if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
-  // Save log
-  logData.push({ date, client, activity, status, update: updateVal });
-  if (logData.length > 15) logData.shift(); // Keep only last 15 logs
+  logData.push({ date, client, activity, status, update: updateValue });
+  if (logData.length > 50) logData.shift(); // Optional limit for logs
 
-  persistData();
+  // Persist data
+  localStorage.setItem("workLogs", JSON.stringify(logData));
+  localStorage.setItem("clients", JSON.stringify(clientHistory));
+  localStorage.setItem("activities", JSON.stringify(activityHistory));
+
+  // Refresh tables/dropdowns
   updateHistoryTable();
   renderClientDropdown();
+  renderClientActivity();
 
   // Reset form
-  document.getElementById('date').value = '';
-  document.getElementById('client').value = '';
-  document.getElementById('activity').value = '';
-  document.getElementById('status').value = 'new';
-  document.getElementById('update').value = '';
-  document.getElementById('update-container').style.display = 'none';
+  dateInput.value = "";
+  clientInput.value = "";
+  activityInput.value = "";
+  statusInput.value = "new";
+  updateInput.value = "";
+  updateContainer.style.display = "none";
 }
 
-// ---------------- HISTORY TABLE ----------------
+// ---------------- Update History Table (Tab 1)
 function updateHistoryTable() {
-  const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
-  tbody.innerHTML = '';
+  const tbody = document.querySelector("#history-table tbody");
+  tbody.innerHTML = "";
 
-  logData.forEach((log, i) => {
+  logData.forEach((log, index) => {
     const row = tbody.insertRow();
     row.insertCell(0).innerText = log.date;
     row.insertCell(1).innerText = log.client;
@@ -131,59 +122,66 @@ function updateHistoryTable() {
     row.insertCell(3).innerText = log.status;
     row.insertCell(4).innerText = log.update;
 
+    // Actions
     const actions = row.insertCell(5);
-    const editBtn = document.createElement('button');
-    editBtn.innerText = 'Edit';
-    editBtn.onclick = () => editLog(i);
-    const deleteBtn = document.createElement('button');
-    deleteBtn.innerText = 'Delete';
-    deleteBtn.onclick = () => deleteLog(i);
+    const editBtn = document.createElement("button");
+    editBtn.innerText = "Edit";
+    editBtn.onclick = () => editLog(index);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerText = "Delete";
+    deleteBtn.onclick = () => deleteLog(index);
 
     actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
   });
 }
 
-// ---------------- EDIT / DELETE ----------------
+// ---------------- Edit/Delete Log
 function editLog(index) {
   const log = logData[index];
-  document.getElementById('date').value = log.date;
-  document.getElementById('client').value = log.client;
-  document.getElementById('activity').value = log.activity;
-  document.getElementById('status').value = log.status;
-  if (log.status === 'ongoing') {
-    document.getElementById('update-container').style.display = 'block';
-    document.getElementById('update').value = log.update;
-  } else {
-    document.getElementById('update-container').style.display = 'none';
-    document.getElementById('update').value = '';
+  dateInput.value = log.date;
+  clientInput.value = log.client;
+  activityInput.value = log.activity;
+  statusInput.value = log.status;
+
+  if (log.status === "ongoing") {
+    updateContainer.style.display = "block";
+    updateInput.value = log.update;
   }
-  deleteLog(index); // Remove before editing
+
+  deleteLog(index); // remove before editing
 }
 
 function deleteLog(index) {
-  if (!confirm('Are you sure you want to delete this log?')) return;
-  logData.splice(index, 1);
-  persistData();
-  updateHistoryTable();
-  renderClientActivity();
+  if (confirm("Are you sure you want to delete this log?")) {
+    logData.splice(index, 1);
+    localStorage.setItem("workLogs", JSON.stringify(logData));
+    updateHistoryTable();
+    renderClientActivity();
+  }
 }
 
-// ---------------- CLIENT LOG TAB ----------------
+// ---------------- Render Client Dropdown (Tab 2)
 function renderClientDropdown() {
-  const select = document.getElementById('client-select');
+  const select = document.getElementById("client-select");
   const prev = lastSelectedClient;
-  // Only show clients that exist in logData
+
+  // Only show clients that exist in the logData
   const activeClients = [...new Set(logData.map(l => l.client))];
   select.innerHTML = activeClients.map(c => `<option value="${c}">${c}</option>`).join('');
+
   if (prev && activeClients.includes(prev)) select.value = prev;
 }
 
+// ---------------- Render Client Activity Table (Tab 2)
 function renderClientActivity() {
-  const client = document.getElementById('client-select').value;
+  const client = document.getElementById("client-select")?.value;
+  if (!client) return;
   lastSelectedClient = client;
-  const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
-  tbody.innerHTML = '';
+
+  const tbody = document.querySelector("#client-activity-table tbody");
+  tbody.innerHTML = "";
 
   const clientLogs = logData.filter(l => l.client === client);
   clientLogs.forEach(l => {
@@ -192,13 +190,7 @@ function renderClientActivity() {
     row.insertCell(1).innerText = l.activity;
     row.insertCell(2).innerText = l.update;
     row.insertCell(3).innerText = l.status;
-    if (l.status === 'new') row.style.fontWeight = 'bold';
-  });
-}
 
-// ---------------- PERSIST DATA ----------------
-function persistData() {
-  localStorage.setItem('workLogs', JSON.stringify(logData));
-  localStorage.setItem('clients', JSON.stringify(clientHistory));
-  localStorage.setItem('activities', JSON.stringify(activityHistory));
+    if (l.status === "new") row.style.fontWeight = "bold";
+  });
 }

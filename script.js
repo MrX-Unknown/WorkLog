@@ -77,18 +77,21 @@ function saveLog() {
   const status = document.getElementById('status').value;
   const updateVal = document.getElementById('update').value.trim();
 
-  if(!date || !client || !activity) { alert("Please fill all fields"); return; }
+  if (!date || !client || !activity) { 
+    alert("Please fill all fields"); 
+    return; 
+  }
 
   // Add to client history
-  if(!clientHistory.includes(client)) clientHistory.push(client);
+  if (!clientHistory.includes(client)) clientHistory.push(client);
   // Add to CEM history
-  if(cem && !cemHistory.includes(cem)) cemHistory.push(cem);
+  if (cem && !cemHistory.includes(cem)) cemHistory.push(cem);
   // Add to Lawyer history
-  if(lawyer && !lawyerHistory.includes(lawyer)) lawyerHistory.push(lawyer);
+  if (lawyer && !lawyerHistory.includes(lawyer)) lawyerHistory.push(lawyer);
 
   // Add to activity history
-  if(!activityHistory[client]) activityHistory[client] = [];
-  if(!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
+  if (!activityHistory[client]) activityHistory[client] = [];
+  if (!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
   logData.push({ date, client, cem, lawyer, activity, status, update: updateVal });
 

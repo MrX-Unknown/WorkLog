@@ -1,168 +1,132 @@
-/* ---------------- General Body and Title ---------------- */
+/* Overall Body */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #fef6f0; /* light pastel peach */
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
+  background-color: #fefcfb;
+  color: #333;
 }
 
+/* Title */
 h1 {
   text-align: center;
   font-size: 48px;
-  font-weight: bold;
-  color: #6c5b7b; /* pastel purple */
+  color: #6c5ce7;
   margin-bottom: 20px;
 }
 
-/* ---------------- Tab Buttons ---------------- */
+/* Tabs */
+.tabs-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .tab-button {
   padding: 10px 20px;
   margin: 0 5px;
-  font-size: 16px;
+  background-color: #a29bfe;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  background-color: #c1f0f6; /* pastel cyan */
-  color: #333;
-  transition: 0.3s;
+  font-size: 16px;
+}
+
+.tab-button.active-tab-button {
+  background-color: #6c5ce7;
 }
 
 .tab-button:hover {
-  background-color: #a0e7e5;
+  background-color: #8e77ff;
 }
 
-.active-tab-button {
-  background-color: #6c5b7b; /* pastel purple */
-  color: white;
-}
+/* Hide tabs by default */
+.tab { display: none; }
 
-/* ---------------- Form Container ---------------- */
+/* Form Styling */
 .form-container {
   max-width: 600px;
-  margin: 20px auto;
-  padding: 15px 20px;
+  margin: 0 auto 20px auto;
+  background-color: #fff0f5;
+  padding: 15px;
   border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* ---------------- Form Groups ---------------- */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #333;
 }
 
-.form-group input,
+.form-group input, 
 .form-group select {
   width: 100%;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 14px;
-  box-sizing: border-box;
-  transition: 0.2s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #f6a6b2; /* pastel pink focus */
-  box-shadow: 0 0 5px #f6a6b2;
+#update-container { display: none; }
+
+/* Suggestions Box */
+.suggestions-box {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  max-height: 120px;
+  overflow-y: auto;
+  position: relative;
 }
 
-/* ---------------- Buttons ---------------- */
-button {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  border: none;
+.suggestions-box div {
+  padding: 5px 8px;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-button:hover {
-  opacity: 0.85;
+.suggestions-box div:hover {
+  background-color: #ffe6f0;
 }
 
-/* ---------------- Table Styling ---------------- */
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 th, td {
-  padding: 8px 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  word-wrap: break-word;
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
 thead th {
-  background-color: #f7d6e0; /* pastel pink header */
-  color: #333;
+  background-color: #ffe6f0;
   position: sticky;
   top: 0;
-  z-index: 1;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #fdf6f0; /* pastel peach */
+tbody tr:nth-child(even) { background-color: #faf0f5; }
+tbody tr:nth-child(odd) { background-color: #fff5fa; }
+
+tbody tr:hover { background-color: #ffe6f0; }
+
+button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-tbody tr:nth-child(odd) {
-  background-color: #ffffff;
-}
+button:hover { background-color: #8e77ff; }
 
-tbody tr:hover {
-  background-color: #e0f7fa; /* pastel cyan hover */
-}
-
-/* Scrollable containers */
 .scrollable {
   max-height: 250px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-/* Suggestions dropdown */
-#client-suggestions div,
-#activity-suggestions div {
-  padding: 6px 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-  background-color: #fff;
-}
-
-#client-suggestions div:hover,
-#activity-suggestions div:hover {
-  background-color: #f6f0ff; /* pastel purple hover */
-}
-
-/* ---------------- Update Box Hidden by Default ---------------- */
-#update-container {
-  display: none;
-}
-
-/* ---------------- Action Buttons ---------------- */
-.edit-button {
-  background-color: #ffcb77; /* pastel orange */
-  margin-right: 5px;
-}
-
-.delete-button {
-  background-color: #ff6b6b; /* pastel red */
-  color: white;
-}
-
-/* ---------------- Misc ---------------- */
-.new-activity {
-  font-weight: bold;
 }

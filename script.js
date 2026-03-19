@@ -1,10 +1,10 @@
-// DATA & STORAGE
+// ---------------- DATA & STORAGE
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
-// INIT
+// ---------------- INITIALIZE UI
 updateHistoryTable();
 renderClientDropdown();
 renderClientActivity();
@@ -19,7 +19,7 @@ function showTab(n){
   });
 }
 
-// ---------------- SUGGESTIONS
+// ---------------- CLIENT AUTO-SUGGEST
 function suggestClient(){
   const input = document.getElementById('client').value.toLowerCase();
   const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
@@ -31,9 +31,10 @@ function suggestClient(){
 function selectClient(c){
   document.getElementById('client').value = c;
   document.getElementById('client-suggestions').style.display = 'none';
-  suggestActivity();
+  suggestActivity(); // Update activity suggestions based on selected client
 }
 
+// ---------------- ACTIVITY AUTO-SUGGEST (CLIENT SPECIFIC)
 function suggestActivity(){
   const client = document.getElementById('client').value;
   const input = document.getElementById('activity').value.toLowerCase();
@@ -42,6 +43,8 @@ function suggestActivity(){
     const box = document.getElementById('activity-suggestions');
     box.innerHTML = suggestions.map(a => `<li onclick="selectActivity('${a}')">${a}</li>`).join('');
     box.style.display = suggestions.length ? 'block' : 'none';
+  } else {
+    document.getElementById('activity-suggestions').style.display = 'none';
   }
 }
 
@@ -50,7 +53,7 @@ function selectActivity(a){
   document.getElementById('activity-suggestions').style.display = 'none';
 }
 
-// ---------------- STATUS UPDATE
+// ---------------- STATUS / UPDATE TOGGLE
 document.getElementById('status').addEventListener('change', ()=>{
   const uc = document.getElementById('update');
   uc.parentElement.style.display = document.getElementById('status').value === 'ongoing' ? 'block' : 'none';
@@ -67,13 +70,18 @@ function saveLog(){
 
   if(!date || !client || !activity) { alert("Fill all fields"); return; }
 
+  // Save client history
   if(!clientHistory.includes(client)) clientHistory.push(client);
+
+  // Save activity history per client
   if(!activityHistory[client]) activityHistory[client] = [];
   if(!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
+  // Save log
   logData.push({date, client, activity, status, update});
   if(logData.length>15) logData.shift();
 
+  // Persist data
   localStorage.setItem('workLogs', JSON.stringify(logData));
   localStorage.setItem('clients', JSON.stringify(clientHistory));
   localStorage.setItem('activities', JSON.stringify(activityHistory));
@@ -81,6 +89,7 @@ function saveLog(){
   updateHistoryTable();
   renderClientDropdown();
 
+  // Reset form
   document.getElementById('date').value = '';
   document.getElementById('client').value = '';
   document.getElementById('activity').value = '';
@@ -89,7 +98,7 @@ function saveLog(){
   document.getElementById('update').parentElement.style.display = 'none';
 }
 
-// ---------------- HISTORY TABLE
+// ---------------- UPDATE HISTORY TABLE
 function updateHistoryTable(){
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML = '';
@@ -113,7 +122,7 @@ function updateHistoryTable(){
   });
 }
 
-// ---------------- EDIT/DELETE
+// ---------------- EDIT / DELETE
 function editLog(index){
   const log = logData[index];
   document.getElementById('date').value = log.date;
@@ -136,7 +145,7 @@ function deleteLog(index){
   }
 }
 
-// ---------------- CLIENT ACTIVITY
+// ---------------- CLIENT ACTIVITY TAB
 function renderClientDropdown(){
   const select = document.getElementById('client-select');
   const prev = lastSelectedClient;

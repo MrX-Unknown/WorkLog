@@ -1,77 +1,110 @@
-/* Title Styling */
+/* TITLE */
 #title {
   font-family: Arial, sans-serif;
-  font-size: 24px;
+  font-size: 32px;
   text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 
+/* BODY */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
 }
 
-#work-log-section, #client-activity-tab, #activity-history {
+/* TAB BUTTONS */
+.tab-buttons {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-#work-log-section label,
-#client-activity-tab label {
-  margin-right: 10px;
-}
-
-#work-log-section input,
-#work-log-section select,
-#client-activity-tab input,
-#client-activity-tab select {
-  margin-bottom: 10px;
-  padding: 5px;
-}
-
-button {
-  padding: 10px;
+.tab-button {
+  padding: 10px 20px;
+  margin: 5px;
   background-color: #4CAF50;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
+.tab-button:hover {
   background-color: #45a049;
 }
 
-#history-table, #client-activity-table {
+.active-tab-button {
+  background-color: #45a049;
+}
+
+/* FORMS */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  height: 28px;
+}
+
+.client-row {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.client-row input {
+  flex: 1;
+}
+
+/* TABLES */
+#history-table,
+#client-activity-table,
+#removed-clients-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-#history-table th, #client-activity-table th,
-#history-table td, #client-activity-table td {
+#history-table th,
+#client-activity-table th,
+#removed-clients-table th,
+#history-table td,
+#client-activity-table td,
+#removed-clients-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-/* Scrollable container for activity history if rows exceed 15 */
-#history-table-container {
+#history-table-container,
+.scrollable {
   max-height: 300px;
   overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-/* Suggestions Dropdown Styling */
+/* SUGGESTIONS */
 ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
   border: 1px solid #ddd;
-  width: 200px;
-  position: absolute;
   background-color: white;
   max-height: 100px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  position: absolute;
+  width: calc(100% - 10px);
+  z-index: 10;
 }
 
 li {
@@ -83,30 +116,12 @@ li:hover {
   background-color: #f0f0f0;
 }
 
-/* Bold "New" activity rows */
+/* Bold new activity */
 .new-activity {
   font-weight: bold;
 }
-/* FIX: Align client row with other inputs */
-.client-row {
-  display: flex;
-  gap: 5px;
-  width: 100%;
-}
 
-.client-row input {
-  flex: 0 0 75%;
-  height: 26px;
-}
-
-.client-row button {
-  flex: 0 0 12.5%;
-  height: 26px;
-  padding: 0;
-}
-
-/* Ensure all inputs match height */
-.form-group input,
-.form-group select {
-  height: 26px;
+/* Tabs */
+.tab {
+  display: none;
 }

@@ -1,51 +1,57 @@
-// ---------------- DATA & STORAGE
+// ---------------- DATA ----------------
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
-// ---------------- INITIALIZE UI
+// DOM Elements
+const statusBox = document.getElementById('status');
+const updateContainer = document.getElementById('update-container');
+const updateInput = document.getElementById('update');
+
+// ---------------- INITIALIZE ----------------
 updateHistoryTable();
 renderClientDropdown();
 renderClientActivity();
 
-// ---------------- TABS
+// ---------------- TABS ----------------
 function showTab(n){
-  document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
-  document.getElementById('tab'+n).style.display = 'block';
-  document.querySelectorAll('.tab-button').forEach((btn,i)=>{
-    btn.classList.remove('active-tab-button');
-    if(i===n-1) btn.classList.add('active-tab-button');
-  });
+  document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+  document.getElementById('tab'+n).style.display='block';
+
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active-tab-button'));
+  document.querySelectorAll('.tab-button')[n-1].classList.add('active-tab-button');
 }
 
-// ---------------- CLIENT AUTO-SUGGEST
-function suggestClient(){
+// ---------------- CLIENT SUGGEST ----------------
+function suggestClient() {
   const input = document.getElementById('client').value.toLowerCase();
-  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
   const box = document.getElementById('client-suggestions');
-  box.innerHTML = suggestions.map(c => `<li onclick="selectClient('${c}')">${c}</li>`).join('');
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
 
 function selectClient(c){
   document.getElementById('client').value = c;
   document.getElementById('client-suggestions').style.display = 'none';
-  suggestActivity(); // Update activity suggestions based on selected client
+  suggestActivity();
 }
 
-// ---------------- ACTIVITY AUTO-SUGGEST (CLIENT SPECIFIC)
-function suggestActivity(){
-  const client = document.getElementById('client').value;
+// ---------------- ACTIVITY SUGGEST ----------------
+function suggestActivity() {
   const input = document.getElementById('activity').value.toLowerCase();
-  if(activityHistory[client]){
-    const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
-    const box = document.getElementById('activity-suggestions');
-    box.innerHTML = suggestions.map(a => `<li onclick="selectActivity('${a}')">${a}</li>`).join('');
-    box.style.display = suggestions.length ? 'block' : 'none';
-  } else {
-    document.getElementById('activity-suggestions').style.display = 'none';
+  const client = document.getElementById('client').value;
+  const box = document.getElementById('activity-suggestions');
+
+  if (!activityHistory[client]) {
+    box.style.display = 'none';
+    return;
   }
+
+  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
 }
 
 function selectActivity(a){
@@ -53,99 +59,107 @@ function selectActivity(a){
   document.getElementById('activity-suggestions').style.display = 'none';
 }
 
-// ---------------- STATUS / UPDATE TOGGLE
-document.getElementById('status').addEventListener('change', ()=>{
-  const uc = document.getElementById('update');
-  uc.parentElement.style.display = document.getElementById('status').value === 'ongoing' ? 'block' : 'none';
-  if(document.getElementById('status').value !== 'ongoing') document.getElementById('update').value = '';
+// ---------------- STATUS UPDATE ----------------
+statusBox.addEventListener('change', () => {
+  if (statusBox.value === 'ongoing') {
+    updateContainer.style.display = 'block';
+  } else {
+    updateContainer.style.display = 'none';
+    updateInput.value = '';
+  }
 });
+if(statusBox.value !== 'ongoing') updateContainer.style.display = 'none';
 
-// ---------------- SAVE LOG
+// ---------------- SAVE LOG ----------------
 function saveLog(){
   const date = document.getElementById('date').value;
   const client = document.getElementById('client').value.trim();
   const activity = document.getElementById('activity').value.trim();
   const status = document.getElementById('status').value;
-  const update = document.getElementById('update').value.trim();
+  const update = updateInput.value.trim();
 
-  if(!date || !client || !activity) { alert("Fill all fields"); return; }
+  if(!date || !client || !activity || !status){
+    alert("Please fill all fields");
+    return;
+  }
 
-  // Save client history
   if(!clientHistory.includes(client)) clientHistory.push(client);
-
-  // Save activity history per client
-  if(!activityHistory[client]) activityHistory[client] = [];
+  if(!activityHistory[client]) activityHistory[client]=[];
   if(!activityHistory[client].includes(activity)) activityHistory[client].push(activity);
 
-  // Save log
   logData.push({date, client, activity, status, update});
-  if(logData.length>15) logData.shift();
+  if(logData.length>15) logData.shift(); // keep last 15 logs
 
-  // Persist data
-  localStorage.setItem('workLogs', JSON.stringify(logData));
-  localStorage.setItem('clients', JSON.stringify(clientHistory));
-  localStorage.setItem('activities', JSON.stringify(activityHistory));
+  localStorage.setItem("workLogs", JSON.stringify(logData));
+  localStorage.setItem("clients", JSON.stringify(clientHistory));
+  localStorage.setItem("activities", JSON.stringify(activityHistory));
 
   updateHistoryTable();
   renderClientDropdown();
 
-  // Reset form
+  // Reset
   document.getElementById('date').value = '';
   document.getElementById('client').value = '';
   document.getElementById('activity').value = '';
   document.getElementById('status').value = 'new';
-  document.getElementById('update').value = '';
-  document.getElementById('update').parentElement.style.display = 'none';
+  updateInput.value = '';
+  updateContainer.style.display = 'none';
 }
 
-// ---------------- UPDATE HISTORY TABLE
+// ---------------- HISTORY TABLE ----------------
 function updateHistoryTable(){
-  const tbody = document.querySelector("#history-table tbody");
+  const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
   tbody.innerHTML = '';
-  logData.forEach((log,index)=>{
+  logData.forEach((log, idx)=>{
     const row = tbody.insertRow();
     row.insertCell(0).innerText = log.date;
     row.insertCell(1).innerText = log.client;
     row.insertCell(2).innerText = log.activity;
-    row.insertCell(3).innerText = log.update;
-    row.insertCell(4).innerText = log.status;
+    row.insertCell(3).innerText = log.status;
+    row.insertCell(4).innerText = log.update;
 
     const actions = row.insertCell(5);
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edit';
-    editBtn.onclick = ()=>editLog(index);
+    editBtn.className = 'edit-button';
+    editBtn.onclick = ()=>editLog(idx);
+
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'Delete';
-    deleteBtn.onclick = ()=>deleteLog(index);
+    deleteBtn.className = 'delete-button';
+    deleteBtn.onclick = ()=>deleteLog(idx);
+
     actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
   });
 }
 
-// ---------------- EDIT / DELETE
-function editLog(index){
-  const log = logData[index];
+// ---------------- EDIT / DELETE ----------------
+function editLog(idx){
+  const log = logData[idx];
   document.getElementById('date').value = log.date;
   document.getElementById('client').value = log.client;
   document.getElementById('activity').value = log.activity;
   document.getElementById('status').value = log.status;
+
   if(log.status==='ongoing'){
-    document.getElementById('update').parentElement.style.display='block';
-    document.getElementById('update').value = log.update;
+    updateContainer.style.display='block';
+    updateInput.value = log.update;
   }
-  deleteLog(index);
+
+  deleteLog(idx);
 }
 
-function deleteLog(index){
+function deleteLog(idx){
   if(confirm("Are you sure?")){
-    logData.splice(index,1);
-    localStorage.setItem('workLogs', JSON.stringify(logData));
+    logData.splice(idx,1);
+    localStorage.setItem("workLogs", JSON.stringify(logData));
     updateHistoryTable();
     renderClientActivity();
   }
 }
 
-// ---------------- CLIENT ACTIVITY TAB
+// ---------------- CLIENT ACTIVITY ----------------
 function renderClientDropdown(){
   const select = document.getElementById('client-select');
   const prev = lastSelectedClient;
@@ -156,10 +170,9 @@ function renderClientDropdown(){
 function renderClientActivity(){
   const client = document.getElementById('client-select').value;
   lastSelectedClient = client;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML = '';
-  const clientLogs = logData.filter(l=>l.client===client);
-  clientLogs.forEach(l=>{
+  const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
+  tbody.innerHTML='';
+  logData.filter(l=>l.client===client).forEach(l=>{
     const row = tbody.insertRow();
     row.insertCell(0).innerText = l.date;
     row.insertCell(1).innerText = l.activity;

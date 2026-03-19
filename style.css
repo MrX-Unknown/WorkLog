@@ -1,6 +1,7 @@
+/* ---------------- General Body and Title ---------------- */
 body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
+  font-family: 'Arial', sans-serif;
+  background-color: #fef6f0; /* light pastel peach */
   margin: 0;
   padding: 20px;
 }
@@ -8,105 +9,160 @@ body {
 h1 {
   text-align: center;
   font-size: 48px;
-  color: #5d5dff;
+  font-weight: bold;
+  color: #6c5b7b; /* pastel purple */
+  margin-bottom: 20px;
 }
 
+/* ---------------- Tab Buttons ---------------- */
+.tab-button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #c1f0f6; /* pastel cyan */
+  color: #333;
+  transition: 0.3s;
+}
+
+.tab-button:hover {
+  background-color: #a0e7e5;
+}
+
+.active-tab-button {
+  background-color: #6c5b7b; /* pastel purple */
+  color: white;
+}
+
+/* ---------------- Form Container ---------------- */
 .form-container {
   max-width: 600px;
   margin: 20px auto;
-  background: #fefefe;
-  padding: 15px;
+  padding: 15px 20px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
+/* ---------------- Form Groups ---------------- */
 .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #333;
 }
 
-.form-group input, .form-group select {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 6px 10px;
-  border-radius: 5px;
+  border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: 0.2s;
 }
 
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #f6a6b2; /* pastel pink focus */
+  box-shadow: 0 0 5px #f6a6b2;
+}
+
+/* ---------------- Buttons ---------------- */
 button {
-  background-color: #A3CEF1;
-  color: #fff;
-  border: none;
   padding: 8px 12px;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: none;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-  background-color: #7eb8e8;
+  opacity: 0.85;
 }
 
-.history-container, .client-activity-container, .removed-clients-container {
-  max-width: 900px;
-  margin: 20px auto;
-  overflow-x: auto;
-}
-
+/* ---------------- Table Styling ---------------- */
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  margin-top: 15px;
 }
 
 th, td {
-  padding: 8px;
-  border: 1px solid #ddd;
+  padding: 8px 10px;
   text-align: left;
+  border-bottom: 1px solid #ddd;
   word-wrap: break-word;
 }
 
 thead th {
-  background-color: #A3CEF1;
-  color: #fff;
+  background-color: #f7d6e0; /* pastel pink header */
+  color: #333;
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
-tbody tr:nth-child(even) { background: #f2f2f2; }
-tbody tr:hover { background: #e0f7fa; }
-
-.tab-button {
-  padding: 10px 20px;
-  margin: 5px;
-  background-color: #A3CEF1;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+tbody tr:nth-child(even) {
+  background-color: #fdf6f0; /* pastel peach */
 }
 
-.tab-button.active-tab-button { background-color: #7eb8e8; }
+tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
 
-.tab { display: none; }
+tbody tr:hover {
+  background-color: #e0f7fa; /* pastel cyan hover */
+}
 
-.scrollable { max-height: 250px; overflow-y: auto; }
-
-.suggestions {
-  position: relative;
-  border: 1px solid #ccc;
-  max-height: 100px;
+/* Scrollable containers */
+.scrollable {
+  max-height: 250px;
   overflow-y: auto;
-  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Suggestions dropdown */
+#client-suggestions div,
+#activity-suggestions div {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
+}
+
+#client-suggestions div:hover,
+#activity-suggestions div:hover {
+  background-color: #f6f0ff; /* pastel purple hover */
+}
+
+/* ---------------- Update Box Hidden by Default ---------------- */
+#update-container {
   display: none;
 }
 
-.suggestions div {
-  padding: 5px;
-  cursor: pointer;
+/* ---------------- Action Buttons ---------------- */
+.edit-button {
+  background-color: #ffcb77; /* pastel orange */
+  margin-right: 5px;
 }
 
-.suggestions div:hover { background-color: #e0e0e0; }
+.delete-button {
+  background-color: #ff6b6b; /* pastel red */
+  color: white;
+}
+
+/* ---------------- Misc ---------------- */
+.new-activity {
+  font-weight: bold;
+}

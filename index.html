@@ -21,7 +21,6 @@
 <div id="tab1" class="tab" style="display:block;">
   <!-- Form for Activity Log -->
   <div class="form-container">
-    <!-- Form fields for Date, CEM, Client, Lawyer, Activity, Status, Update -->
     <div class="form-group">
       <label>Date:</label>
       <input type="date" id="date">
@@ -41,9 +40,7 @@
 
     <div class="form-group">
       <label>Client:</label>
-      <div class="client-row">
-        <input type="text" id="client" oninput="suggestClient()">
-      </div>
+      <input type="text" id="client" oninput="suggestClient()">
       <div id="client-suggestions" style="display:none;"></div>
     </div>
 
@@ -79,12 +76,12 @@
         <thead>
           <tr>
             <th>Date</th>
+            <th>CEM</th>
+            <th>Lawyer</th>
             <th>Client</th>
             <th>Activity</th>
             <th>Update</th>
             <th>Status</th>
-            <th>CEM</th>
-            <th>Lawyer</th>
             <th>Actions</th>
           </tr>
         </thead>

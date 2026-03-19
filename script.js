@@ -217,4 +217,21 @@ function renderClientActivity() {
     row.insertCell(2).innerText = l.update;
     row.insertCell(3).innerText = l.status;
 
-    if(l.status === 'new') row.style.fontWeight = '
+    if(l.status === 'new') row.style.fontWeight = 'bold';
+  });
+}
+
+// ---------------- Client-select change listener
+document.getElementById('client-select').addEventListener('change', renderClientActivity);
+
+// ---------------- LocalStorage Check (Cross-browser compatibility)
+function isLocalStorageAvailable() {
+  try {
+    const test = '__test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

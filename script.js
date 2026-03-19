@@ -119,19 +119,19 @@ function saveLog() {
   document.getElementById('update-container').style.display = 'none';
 }
 
-// ---------------- Update history table (with CEM and Lawyer)
+// ---------------- Update history table (with CEM and Lawyer beside Date)
 function updateHistoryTable() {
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML = '';
   logData.forEach((l, i) => {
     const row = tbody.insertRow();
     row.insertCell(0).innerText = l.date;
-    row.insertCell(1).innerText = l.client;
-    row.insertCell(2).innerText = l.activity;
-    row.insertCell(3).innerText = l.update;
-    row.insertCell(4).innerText = l.status;
-    row.insertCell(5).innerText = l.cem; // Show CEM
-    row.insertCell(6).innerText = l.lawyer; // Show Lawyer
+    row.insertCell(1).innerText = l.cem; // Show CEM right after Date
+    row.insertCell(2).innerText = l.lawyer; // Show Lawyer right after Date
+    row.insertCell(3).innerText = l.client;
+    row.insertCell(4).innerText = l.activity;
+    row.insertCell(5).innerText = l.update;
+    row.insertCell(6).innerText = l.status;
 
     const actions = row.insertCell(7);
     const editBtn = document.createElement("button");

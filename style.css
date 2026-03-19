@@ -87,3 +87,26 @@ li:hover {
 .new-activity {
   font-weight: bold;
 }
+/* FIX: Align client row with other inputs */
+.client-row {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.client-row input {
+  flex: 0 0 75%;
+  height: 26px;
+}
+
+.client-row button {
+  flex: 0 0 12.5%;
+  height: 26px;
+  padding: 0;
+}
+
+/* Ensure all inputs match height */
+.form-group input,
+.form-group select {
+  height: 26px;
+}

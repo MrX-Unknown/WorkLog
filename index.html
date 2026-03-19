@@ -4,75 +4,83 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work Log</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Work Log</h1>
+<h1>Work Log</h1>
 
-  <!-- Tab Buttons -->
-  <div class="tab-buttons">
-    <button class="tab-button active-tab-button" onclick="showTab(1)">Work Log</button>
-    <button class="tab-button" onclick="showTab(2)">Activity Log</button>
-    <button class="tab-button" onclick="showTab(3)">Accomplished Log</button>
-  </div>
+<div style="text-align: center;">
+  <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
+  <button class="tab-button" onclick="showTab(2)">Client Log</button>
+  <button class="tab-button" onclick="showTab(3)">Removed Log</button>
+</div>
 
-  <!-- Tab 1: Work Log -->
-  <div class="tab" id="tab1">
-    <div class="form-container">
-      <div class="form-group">
-        <label for="date">Date:</label>
-        <input type="date" id="date">
-      </div>
-      <div class="form-group">
-        <label for="cem">CEM:</label>
-        <input type="text" id="cem" oninput="suggestCem()">
-        <div id="cem-suggestions"></div>
-      </div>
-      <div class="form-group">
-        <label for="attorney">Atty. in Charge:</label>
-        <input type="text" id="attorney" oninput="suggestAttorney()">
-        <div id="attorney-suggestions"></div>
-      </div>
-      <div class="form-group">
-        <label for="client">Client:</label>
-        <input type="text" id="client" oninput="suggestClient()">
-        <div id="client-suggestions"></div>
-      </div>
-      <div class="form-group">
-        <label for="activity">Activity:</label>
-        <input type="text" id="activity" oninput="suggestActivity()">
-        <div id="activity-suggestions"></div>
-      </div>
-      <div class="form-group">
-        <label for="status">Status:</label>
-        <select id="status" onchange="handleStatusChange()">
-          <option value="new">New</option>
-          <option value="ongoing">Ongoing</option>
-          <option value="done">Done</option>
-        </select>
-      </div>
-      <div id="update-container" style="display:none;">
-        <div class="form-group">
-          <label for="update">Update:</label>
-          <input type="text" id="update">
-        </div>
-      </div>
-      <button onclick="saveLog()">Enter</button>
+<!-- TAB 1 -->
+<div id="tab1" class="tab" style="display:block;">
+  <div class="form-container">
+    <div class="form-group">
+      <label>Date:</label>
+      <input type="date" id="date">
     </div>
 
-    <div class="history-container">
-      <h2>Work Log History</h2>
+    <!-- NEW: CEM -->
+    <div class="form-group">
+      <label>CEM:</label>
+      <input type="text" id="cem" oninput="suggestCEM()" onfocus="suggestCEM()">
+      <div id="cem-suggestions" style="display:none;"></div>
+    </div>
+
+    <!-- NEW: Atty in Charge -->
+    <div class="form-group">
+      <label>Atty. in Charge:</label>
+      <input type="text" id="atty" oninput="suggestAtty()" onfocus="suggestAtty()">
+      <div id="atty-suggestions" style="display:none;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Client:</label>
+      <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
+      <div id="client-suggestions" style="display:none;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Activity:</label>
+      <input type="text" id="activity" oninput="suggestActivity()">
+      <div id="activity-suggestions" style="display:none;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Status:</label>
+      <select id="status">
+        <option value="new">New</option>
+        <option value="ongoing">On Going</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="update-container" style="display:none;">
+      <label>Update:</label>
+      <input type="text" id="update">
+    </div>
+
+    <div class="form-group">
+      <button onclick="saveLog()">Enter</button>
+    </div>
+  </div>
+
+  <div class="history-container">
+    <div class="scrollable">
       <table id="history-table">
         <thead>
           <tr>
             <th>Date</th>
-            <th>CEM</th>
-            <th>Atty. in Charge</th>
+            <th>CEM</th> <!-- Added CEM here -->
+            <th>Atty. in Charge</th> <!-- Added Atty. in Charge here -->
             <th>Client</th>
             <th>Activity</th>
             <th>Status</th>
-            <th>Update</th>
+            <th>Update</th> <!-- Switch the position of Status and Update -->
             <th>Actions</th>
           </tr>
         </thead>
@@ -80,53 +88,44 @@
       </table>
     </div>
   </div>
+</div>
 
-  <!-- Tab 2: Activity Log -->
-  <div class="tab" id="tab2">
-    <div class="form-container">
-      <div class="form-group">
-        <label for="client-select">Select Client:</label>
-        <select id="client-select" onchange="renderClientActivity()"></select>
-      </div>
-      <div class="history-container">
-        <h2>Client Activity Log</h2>
-        <table id="client-activity-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>CEM</th>
-              <th>Atty. in Charge</th>
-              <th>Activity</th>
-              <th>Status</th>
-              <th>Update</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+<!-- TAB 2 -->
+<div id="tab2" class="tab">
+  <div class="client-activity-container">
+    <label>Select Client:</label>
+    <select id="client-select" onchange="renderClientActivity()"></select>
 
-  <!-- Tab 3: Accomplished Log -->
-  <div class="tab" id="tab3">
-    <div class="history-container">
-      <h2>Accomplished Logs</h2>
-      <table id="accomplished-activity-table">
+    <div class="scrollable">
+      <table id="client-activity-table">
         <thead>
           <tr>
             <th>Date</th>
-            <th>CEM</th>
-            <th>Atty. in Charge</th>
+            <th>CEM</th> <!-- Added CEM here -->
+            <th>Atty. in Charge</th> <!-- Added Atty. in Charge here -->
             <th>Activity</th>
-            <th>Status</th>
             <th>Update</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
+</div>
 
-  <script src="scripts.js"></script>
+<!-- TAB 3 -->
+<div id="tab3" class="tab">
+  <div class="removed-clients-container">
+    <div class="scrollable">
+      <table id="removed-clients-table">
+        <thead><tr><th>Client</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -20,8 +20,10 @@ function showTab(n) {
     if (i === n - 1) btn.classList.add('active-tab-button');
   });
 
-  if (n === 2) renderClientDropdown();
-  if (n === 2) renderClientActivity();
+  if (n === 2) {
+    renderClientDropdown();
+    renderClientActivity();
+  }
 }
 
 // ---------------- Suggestions
@@ -150,7 +152,11 @@ function editLog(index) {
 function deleteLog(index) {
   if (confirm('Are you sure you want to delete this log?')) {
     logData.splice(index, 1);
+
+    // Persist after deletion
     localStorage.setItem('workLogs', JSON.stringify(logData));
+
+    // Re-render both tabs to ensure Tab 2 reflects deletion
     updateHistoryTable();
     renderClientDropdown();
     renderClientActivity();
@@ -168,6 +174,7 @@ function renderClientDropdown() {
   select.innerHTML = activeClients.map(c => `<option value="${c}">${c}</option>`).join('');
   if (prev && activeClients.includes(prev)) {
     select.value = prev;
+    lastSelectedClient = prev;
   } else if (activeClients.length > 0) {
     select.value = activeClients[0];
     lastSelectedClient = activeClients[0];

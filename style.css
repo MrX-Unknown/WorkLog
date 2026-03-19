@@ -1,114 +1,121 @@
+/* Global */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: #f7f4f0; /* pastel background */
+  background-color: #fdf6f0; /* Pastel background */
 }
 
 h1 {
   text-align: center;
   font-size: 48px;
-  color: #5b5b8d;
+  font-weight: bold;
+  color: #556b2f; /* Pastel-green heading */
 }
 
+/* Tabs */
+.tab-button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #a2d5c6; /* Pastel green */
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tab-button.active-tab-button {
+  background-color: #79c7a5; /* Darker pastel green */
+}
+
+/* Form container */
 .form-container {
-  max-width: 700px;
+  max-width: 600px;
   margin: 20px auto;
+  background-color: #fff7f3; /* Pastel container */
   padding: 15px;
-  background-color: #fff2f0; /* pastel card */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 10px;
 }
 
 .form-group label {
+  display: block;
+  font-weight: bold;
   margin-bottom: 5px;
-  font-weight: bold;
-  color: #5b5b8d;
 }
 
-.form-group input, .form-group select {
+.form-group input,
+.form-group select {
+  width: 100%;
   padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
+/* Update container hidden by default */
+#update-container {
+  display: none;
+}
+
+/* Buttons */
 button {
-  padding: 10px;
-  background-color: #ffb3b3;
-  color: #5b5b8d;
+  padding: 8px 12px;
+  background-color: #a2d5c6;
+  color: #333;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
 }
 
 button:hover {
-  background-color: #ffa6a6;
+  background-color: #79c7a5;
 }
 
-.scrollable {
-  max-height: 250px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 th, td {
   padding: 8px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
+  word-wrap: break-word;
   text-align: left;
 }
 
 thead th {
   position: sticky;
   top: 0;
-  background-color: #ffd6d6;
+  background-color: #a2d5c6;
+  color: #333;
+  z-index: 1;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #fff0f0;
-}
+tbody tr:nth-child(even) { background-color: #fdf0e7; }
+tbody tr:nth-child(odd) { background-color: #fff7f3; }
+tbody tr:hover { background-color: #f0f8ff; }
 
-tbody tr:hover {
-  background-color: #ffe6e6;
-}
-
-.tab { display: none; }
-
-.tab-button {
-  padding: 10px 20px;
-  margin: 5px;
-  background-color: #ffcccc;
-  color: #5b5b8d;
-  border: none;
+/* Scrollable tables */
+.scrollable {
+  max-height: 250px;
+  overflow-y: auto;
   border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+  border: 1px solid #ccc;
 }
 
-.tab-button:hover {
-  background-color: #ffb3b3;
-}
-
-.active-tab-button {
-  background-color: #ffa6a6;
-}
-
-/* Auto-suggest boxes */
-#client-suggestions div, #activity-suggestions div, #cem-suggestions div, #atty-suggestions div {
+/* Suggestions */
+#client-suggestions div,
+#activity-suggestions div {
   padding: 6px;
   cursor: pointer;
   background-color: #fff;
@@ -116,6 +123,7 @@ tbody tr:hover {
   margin: 2px 0;
 }
 
-#client-suggestions div:hover, #activity-suggestions div:hover, #cem-suggestions div:hover, #atty-suggestions div:hover {
-  background-color: #f0f0f0;
+#client-suggestions div:hover,
+#activity-suggestions div:hover {
+  background-color: #e0f0ea;
 }

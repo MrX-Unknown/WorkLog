@@ -5,7 +5,6 @@ let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let cemHistory = JSON.parse(localStorage.getItem("cems")) || [];
 let attyHistory = JSON.parse(localStorage.getItem("attys")) || [];
 let lastSelectedClient = null;
-let accomplishedLogs = JSON.parse(localStorage.getItem("accomplishedLogs")) || [];  // New array for accomplished logs
 
 // ------------------ Tabs
 function showTab(n) {
@@ -58,7 +57,7 @@ function saveLog() {
   document.getElementById('update-container').style.display='none';
 }
 
-// ------------------ Update History Table (Tab 1)
+// ------------------ History Table
 function updateHistoryTable() {
   const tbody = document.getElementById('history-table').getElementsByTagName('tbody')[0];
   tbody.innerHTML = '';
@@ -84,63 +83,44 @@ function updateHistoryTable() {
   });
 }
 
-// ------------------ Move to Accomplished Log (Tab 3)
-function moveToAccomplished(index) {
+// ------------------ Edit/Delete
+function editLog(index) {
   const log = logData[index];
-  if (log.status !== 'done') {
-    alert('Only activities with status "Done" can be moved to Accomplished.');
-    return;
-  }
+  ['date','client','activity','update','cem','atty'].forEach(id => document.getElementById(id).value=log[id]||'');
+  document.getElementById('status').value = log.status;
+  document.getElementById('update-container').style.display = log.status==='ongoing'?'block':'none';
+  deleteLog(index);
+}
 
-  // Remove log from logData and add it to accomplishedLogs
-  accomplishedLogs.push(log);
-  logData.splice(index, 1);
-
-  // Persist changes
+function deleteLog(index) {
+  logData.splice(index,1);
   localStorage.setItem('workLogs', JSON.stringify(logData));
-  localStorage.setItem('accomplishedLogs', JSON.stringify(accomplishedLogs));
-
   updateHistoryTable();
-  renderClientDropdown();
   renderClientActivity();
-  renderAccomplishedLogs();
+  removeDeletedClientFromData(logData[index].client);
 }
 
-// ------------------ Render Accomplished Logs in Tab 3
-function renderAccomplishedLogs() {
-  const tbody = document.getElementById('accomplished-table').getElementsByTagName('tbody')[0];
-  tbody.innerHTML = '';
-  accomplishedLogs.forEach((log, index) => {
-    const row = tbody.insertRow();
-    row.insertCell(0).innerText = log.date;
-    row.insertCell(1).innerText = log.cem;
-    row.insertCell(2).innerText = log.atty;
-    row.insertCell(3).innerText = log.client;
-    row.insertCell(4).innerText = log.activity;
-    row.insertCell(5).innerText = log.status;
-    row.insertCell(6).innerText = log.update;
+// ------------------ Status toggle
+document.getElementById('status').addEventListener('change', function() {
+  document.getElementById('update-container').style.display = this.value==='ongoing'?'block':'none';
+  if (this.value!=='ongoing') document.getElementById('update').value='';
+});
 
-    const actions = row.insertCell(7);
-    actions.innerHTML = `<button onclick="deleteAccomplishedLog(${index})">Delete</button>`;
-  });
+// ------------------ Client Activity Tab
+function renderClientDropdown() {
+  const select = document.getElementById('client-select');
+  // Only show clients that are still in the data
+  const validClients = clientHistory.filter(client => logData.some(log => log.client === client));
+  select.innerHTML = validClients.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if (lastSelectedClient) select.value = lastSelectedClient;
 }
 
-// ------------------ Delete Accomplished Log
-function deleteAccomplishedLog(index) {
-  if (confirm('Are you sure you want to delete this accomplished log?')) {
-    accomplishedLogs.splice(index, 1);
-    localStorage.setItem('accomplishedLogs', JSON.stringify(accomplishedLogs));
-    renderAccomplishedLogs();
-  }
-}
-
-// ------------------ Client Activity Tab (Tab 2)
 function renderClientActivity() {
   const client = document.getElementById('client-select').value;
   lastSelectedClient = client;
   const tbody = document.getElementById('client-activity-table').getElementsByTagName('tbody')[0];
   tbody.innerHTML = '';
-  logData.filter(l => l.client === client).forEach(l => {
+  logData.filter(l=>l.client===client).forEach(l=>{
     const row = tbody.insertRow();
     row.insertCell(0).innerText = l.date;
     row.insertCell(1).innerText = l.cem;
@@ -148,24 +128,89 @@ function renderClientActivity() {
     row.insertCell(3).innerText = l.activity;
     row.insertCell(4).innerText = l.update;
     row.insertCell(5).innerText = l.status;
-
-    if (l.status === 'done') {
-      row.style.backgroundColor = '#d3ffd3';  // Mark Done rows with a different background color
-    }
   });
 }
 
-// ------------------ Status toggle (for Update input visibility)
-document.getElementById('status').addEventListener('change', function() {
-  document.getElementById('update-container').style.display = this.value === 'ongoing' ? 'block' : 'none';
-  if (this.value !== 'ongoing') document.getElementById('update').value = '';
-});
+// ------------------ Auto-suggest (Removed clients not in data)
+function suggestClient() {
+  const input = document.getElementById('client').value.toLowerCase();
+  const box = document.getElementById('client-suggestions');
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input) && logData.some(log => log.client === c));
+  box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
+}
+
+function selectClient(c) {
+  document.getElementById('client').value = c;
+  document.getElementById('client-suggestions').style.display = 'none';
+  suggestActivity();
+}
+
+// ------------------ Auto-suggest for Activity
+function suggestActivity() {
+  const client = document.getElementById('client').value;
+  const input = document.getElementById('activity').value.toLowerCase();
+  const box = document.getElementById('activity-suggestions');
+  if (!activityHistory[client]) return;
+  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
+}
+
+function selectActivity(a) {
+  document.getElementById('activity').value = a;
+  document.getElementById('activity-suggestions').style.display = 'none';
+}
+
+// ------------------ Auto-suggest for CEM and Atty
+function suggestCEM() {
+  const input = document.getElementById('cem').value.toLowerCase();
+  const box = document.getElementById('cem-suggestions');
+  const suggestions = cemHistory.filter(c => c.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(c => `<div onclick="selectCEM('${c}')">${c}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
+}
+
+function selectCEM(c) {
+  document.getElementById('cem').value = c;
+  document.getElementById('cem-suggestions').style.display = 'none';
+}
+
+function suggestAtty() {
+  const input = document.getElementById('atty').value.toLowerCase();
+  const box = document.getElementById('atty-suggestions');
+  const suggestions = attyHistory.filter(a => a.toLowerCase().includes(input));
+  box.innerHTML = suggestions.map(a => `<div onclick="selectAtty('${a}')">${a}</div>`).join('');
+  box.style.display = suggestions.length ? 'block' : 'none';
+}
+
+function selectAtty(a) {
+  document.getElementById('atty').value = a;
+  document.getElementById('atty-suggestions').style.display = 'none';
+}
+
+// ------------------ Remove Deleted Client Data from Client Suggestions
+function removeDeletedClientFromData(client) {
+  // Remove client from all activity history, CEM history, and Atty history
+  activityHistory = Object.fromEntries(
+    Object.entries(activityHistory).filter(([key]) => key !== client)
+  );
+  cemHistory = cemHistory.filter(cem => cem !== client);
+  attyHistory = attyHistory.filter(atty => atty !== client);
+
+  // Remove the client from clientHistory and re-save the data
+  clientHistory = clientHistory.filter(c => c !== client);
+  localStorage.setItem('clients', JSON.stringify(clientHistory));
+  localStorage.setItem('activities', JSON.stringify(activityHistory));
+  localStorage.setItem('cems', JSON.stringify(cemHistory));
+  localStorage.setItem('attys', JSON.stringify(attyHistory));
+  renderClientDropdown(); // Re-render the client dropdown for Tab 2
+}
 
 // ------------------ Initialize
 window.onload = function () {
   updateHistoryTable();
   renderClientDropdown();
   renderClientActivity();
-  renderAccomplishedLogs();
   showTab(1);
 }

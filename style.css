@@ -115,6 +115,8 @@ tbody tr:hover { background-color: #f0f8ff; }
 
 /* Suggestions */
 #client-suggestions div,
+#cem-suggestions div,
+#lawyer-suggestions div,
 #activity-suggestions div {
   padding: 6px;
   cursor: pointer;
@@ -124,6 +126,8 @@ tbody tr:hover { background-color: #f0f8ff; }
 }
 
 #client-suggestions div:hover,
+#cem-suggestions div:hover,
+#lawyer-suggestions div:hover,
 #activity-suggestions div:hover {
   background-color: #e0f0ea;
 }

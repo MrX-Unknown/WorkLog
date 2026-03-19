@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,10 +169,10 @@
 
     <div class="form-group">
       <label>Client:</label>
-      <div style="display:flex;">
-        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
-        <button type="button" onclick="addClient()">Add</button>
-        <button type="button" onclick="removeClient()" style="background:#f44336;">Remove</button>
+      <div style="display:flex; gap:5px;">
+        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()" style="flex: 0 0 75%;">
+        <button type="button" onclick="addClient()" style="flex: 0 0 12.5%;">Add</button>
+        <button type="button" onclick="removeClient()" style="flex: 0 0 12.5%; background:#f44336;">Remove</button>
       </div>
       <div id="client-suggestions" style="display:none;"></div>
     </div>
@@ -265,7 +266,7 @@ function showTab(n){
 
 /* SAVE LOG */
 function saveLog(){
-  const date = date.value;
+  const date = document.getElementById("date").value;
   const client = clientInput.value.trim();
   const activity = activityInput.value.trim();
   const status = statusInput.value;
@@ -442,3 +443,4 @@ window.onload = loadStorage;
 
 </body>
 </html>
+```

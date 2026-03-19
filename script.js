@@ -119,17 +119,17 @@ function saveLog() {
   document.getElementById('update-container').style.display = 'none';
 }
 
-// ---------------- Update history table
+// ---------------- Update history table (with Status and Update swapped)
 function updateHistoryTable() {
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML = '';
-  logData.forEach((l,i) => {
+  logData.forEach((l, i) => {
     const row = tbody.insertRow();
     row.insertCell(0).innerText = l.date;
     row.insertCell(1).innerText = l.client;
     row.insertCell(2).innerText = l.activity;
-    row.insertCell(3).innerText = l.status;
-    row.insertCell(4).innerText = l.update;
+    row.insertCell(3).innerText = l.update;  // Updated to show Update before Status
+    row.insertCell(4).innerText = l.status; // Updated to show Status after Update
 
     const actions = row.insertCell(5);
     const editBtn = document.createElement("button");
@@ -217,21 +217,4 @@ function renderClientActivity() {
     row.insertCell(2).innerText = l.update;
     row.insertCell(3).innerText = l.status;
 
-    if(l.status === 'new') row.style.fontWeight = 'bold';
-  });
-}
-
-// ---------------- Client-select change listener
-document.getElementById('client-select').addEventListener('change', renderClientActivity);
-
-// ---------------- LocalStorage Check (Cross-browser compatibility)
-function isLocalStorageAvailable() {
-  try {
-    const test = '__test__';
-    localStorage.setItem(test, test);
-    localStorage.removeItem(test);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+    if(l.status === 'new') row.style.fontWeight = '

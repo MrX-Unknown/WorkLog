@@ -1,19 +1,23 @@
+/* General body styles */
 body {
   font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
   margin: 0;
   padding: 20px;
-  background-color: #f9f9f9; /* Pastel background */
 }
 
-h1 {
+/* Title Styling */
+#title {
+  font-size: 24px;
   text-align: center;
-  font-size: 36px;
+  margin-bottom: 20px;
 }
 
+/* Tab button styles */
 .tab-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #a3d9c9; /* Light pastel green */
+  background-color: #a8d8e8;  /* Pastel color */
   color: white;
   border: none;
   border-radius: 4px;
@@ -23,69 +27,200 @@ h1 {
 }
 
 .tab-button:hover {
-  background-color: #7cc1b0; /* Darker green on hover */
+  background-color: #6dc0d2;  /* Slightly darker */
 }
 
 .active-tab-button {
-  background-color: #7cc1b0; /* Active tab highlight */
+  background-color: #6dc0d2;
 }
 
+/* Hide all tabs by default */
 .tab {
   display: none;
 }
 
-.form-container {
-  max-width: 600px;
-  margin: 20px auto;
-  background-color: #fff;
-  padding: 15px;
+/* Container for forms and tables */
+.form-container, .history-container {
+  margin-top: 20px;
+  background-color: #ffffff;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Form input and select styling */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px 10px;
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
   font-size: 14px;
-  border: 1px solid #ccc;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px;
   border-radius: 4px;
-  box-sizing: border-box;
+  border: 1px solid #ddd;
+  font-size: 14px;
 }
 
-.history-container {
-  margin-top: 30px;
+.form-group button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
 }
 
+.form-group button:hover {
+  background-color: #45a049;
+}
+
+/* Client and Activity Suggestions box */
+#client-suggestions div, #activity-suggestions div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+}
+
+#client-suggestions div:hover, #activity-suggestions div:hover {
+  background-color: #e0e0e0;
+}
+
+/* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
-}
-
-thead th {
-  background-color: #a3d9c9; /* Pastel header */
-  color: white;
+  margin-top: 20px;
 }
 
 th, td {
-  padding: 8px;
+  padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+/* Alternating Row Colors */
+tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+tbody tr:nth-child(even) { background-color: #eaf7f7; }
+
+tbody tr:hover { background-color: #d0f4f4; }
+
+/* Sticky Header */
+thead th {
+  background-color: #4CAF50;
+  color: white;
+  position: sticky;
+  top: 0;
 }
 
-tbody tr:hover {
-  background-color: #e0f7fa;
-}
-
+/* Scrollable table */
 .scrollable {
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Client Select box and Status dropdown */
+#client-select, #status {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* Update container (only shown when status is 'Ongoing') */
+#update-container {
+  display: none;
+}
+
+/* Tab 3 - Accomplished Log Styling */
+#accomplished-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#accomplished-table th, #accomplished-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#accomplished-table tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+#accomplished-table tbody tr:nth-child(even) { background-color: #e0f7fa; }
+#accomplished-table tbody tr:hover { background-color: #f1f1f1; }
+
+#accomplished-table th {
+  background-color: #4CAF50;
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Auto-suggest client & activity boxes */
+#client-suggestions, #activity-suggestions {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  max-height: 150px;
+  width: 100%;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+#client-suggestions div, #activity-suggestions div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+#client-suggestions div:hover, #activity-suggestions div:hover {
+  background-color: #f0f0f0;
+}
+
+/* Client, CEM, Atty Box alignment in Tab 1 */
+.client-row, .cem-row, .atty-row {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.client-row input, .cem-row input, .atty-row input {
+  flex: 0 0 75%;
+  height: 26px;
+}
+
+.client-row button, .cem-row button, .atty-row button {
+  flex: 0 0 12.5%;
+  height: 26px;
+  padding: 0;
+}
+
+/* Fix Update field for ongoing status */
+.form-group input, .form-group select {
+  height: 26px;
 }

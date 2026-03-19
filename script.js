@@ -2,6 +2,8 @@ let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 
+let lastSelectedClient = null;
+
 // Function to show the appropriate tab
 function showTab(n) {
   document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
@@ -28,7 +30,7 @@ function saveLog() {
   logData.push({ date, client, activity, status, update: updateValue });
   if (logData.length > 15) logData.shift(); // Keep last 15 logs
 
-  // Persist data
+  // Persist everything
   localStorage.setItem('workLogs', JSON.stringify(logData));
   localStorage.setItem('clients', JSON.stringify(clientHistory));
   localStorage.setItem('activities', JSON.stringify(activityHistory));
@@ -45,7 +47,7 @@ function saveLog() {
   document.getElementById('update-container').style.display = 'none';
 }
 
-// Update the history table with saved logs
+// Update History Table
 function updateHistoryTable() {
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML = "";
@@ -63,20 +65,20 @@ function updateHistoryTable() {
   });
 }
 
-// Delete log
+// Delete Log
 function deleteLog(i) {
   logData.splice(i, 1);
-  localStorage.setItem("workLogs", JSON.stringify(logData));
+  localStorage.setItem('workLogs', JSON.stringify(logData));
   updateHistoryTable();
+  renderClientActivity();
 }
 
-// Client auto-suggestions
+// Client Auto-Suggestions
 function suggestClient() {
-  const input = document.getElementById('client').value;
-  const box = document.getElementById('client-suggestions');
-  
-  let suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
+  const input = document.getElementById('client').value.toLowerCase();
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
 
+  const box = document.getElementById('client-suggestions');
   box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
@@ -87,16 +89,15 @@ function selectClient(client) {
   suggestActivity();
 }
 
-// Activity auto-suggestions
+// Activity Auto-Suggestions
 function suggestActivity() {
-  const input = document.getElementById('activity').value;
   const client = document.getElementById('client').value;
-  
+  const input = document.getElementById('activity').value.toLowerCase();
+
   if (!activityHistory[client]) return;
 
+  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input));
   const box = document.getElementById('activity-suggestions');
-  const suggestions = activityHistory[client].filter(a => a.toLowerCase().includes(input.toLowerCase()));
-
   box.innerHTML = suggestions.map(a => `<div onclick="selectActivity('${a}')">${a}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
 }
@@ -106,31 +107,33 @@ function selectActivity(activity) {
   document.getElementById('activity-suggestions').style.display = 'none';
 }
 
-// Render Client dropdown in Tab 2
+// Auto-select Status
+document.getElementById('status').addEventListener('change', function() {
+  const uc = document.getElementById('update-container');
+  uc.style.display = this.value === 'ongoing' ? 'block' : 'none';
+  if (this.value !== 'ongoing') document.getElementById('update').value = '';
+});
+
+// Client Dropdown for Tab 2
 function renderClientDropdown() {
-  const select = document.getElementById("client-select");
-  select.innerHTML = clientHistory.map(c => `<option>${c}</option>`).join("");
+  const select = document.getElementById('client-select');
+  const prev = lastSelectedClient;
+  select.innerHTML = clientHistory.map(c => `<option value="${c}">${c}</option>`).join("");
+  if (prev) select.value = prev;
 }
 
-// Render Client activity for Tab 2
 function renderClientActivity() {
-  const client = document.getElementById("client-select").value;
+  const client = document.getElementById('client-select').value;
+  lastSelectedClient = client;
   const tbody = document.querySelector("#client-activity-table tbody");
   tbody.innerHTML = "";
 
-  logData.filter(l => l.client === client).forEach(l => {
-    let row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${l.date}</td>
-      <td>${l.activity}</td>
-      <td>${l.update}</td>
-      <td>${l.status}</td>
-    `;
+  const clientLogs = logData.filter(l => l.client === client);
+  const grouped = {};
+  clientLogs.forEach(l => {
+    if (!grouped[l.activity]) grouped[l.activity] = [];
+    grouped[l.activity].push(l);
   });
-}
 
-// On page load
-window.onload = () => {
-  showTab(1);  // Show Tab 1 by default
-  renderClientDropdown();
-};
+  Object.keys(grouped).forEach(act => {
+    grouped[act].forEach(l =>

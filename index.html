@@ -10,38 +10,35 @@
 
 <h1>Work Log</h1>
 
-<!-- Tab Buttons -->
+<!-- Tabs Buttons -->
 <div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
   <button class="tab-button" onclick="showTab(3)">Removed Log</button>
 </div>
 
-<!-- Tab 1: Activity Log -->
+<!-- Tab 1 -->
 <div id="tab1" class="tab" style="display:block;">
   <div class="form-container">
-    <!-- Date, Client, Activity, Status, Update -->
     <div class="form-group">
-      <label>Date:</label>
+      <label for="date">Date:</label>
       <input type="date" id="date">
     </div>
-    
+
     <div class="form-group">
-      <label>Client:</label>
-      <div class="client-row">
-        <input type="text" id="client" oninput="suggestClient()">
-      </div>
-      <div id="client-suggestions" style="display:none;"></div>
+      <label for="client">Client:</label>
+      <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
+      <div id="client-suggestions" class="suggestions" style="display:none;"></div>
     </div>
 
     <div class="form-group">
-      <label>Activity:</label>
+      <label for="activity">Activity:</label>
       <input type="text" id="activity" oninput="suggestActivity()">
-      <div id="activity-suggestions" style="display:none;"></div>
+      <div id="activity-suggestions" class="suggestions" style="display:none;"></div>
     </div>
 
     <div class="form-group">
-      <label>Status:</label>
+      <label for="status">Status:</label>
       <select id="status">
         <option value="new">New</option>
         <option value="ongoing">On Going</option>
@@ -50,7 +47,7 @@
     </div>
 
     <div class="form-group" id="update-container" style="display:none;">
-      <label>Update:</label>
+      <label for="update">Update:</label>
       <input type="text" id="update">
     </div>
 
@@ -59,7 +56,6 @@
     </div>
   </div>
 
-  <!-- History Table -->
   <div class="history-container">
     <div class="scrollable">
       <table id="history-table">
@@ -79,9 +75,10 @@
   </div>
 </div>
 
-<!-- Tab 2: Client Log -->
+<!-- Tab 2 -->
 <div id="tab2" class="tab">
   <div class="client-activity-container">
+    <label for="client-select">Select Client:</label>
     <select id="client-select" onchange="renderClientActivity()"></select>
 
     <div class="scrollable">
@@ -100,7 +97,7 @@
   </div>
 </div>
 
-<!-- Tab 3: Removed Clients Log -->
+<!-- Tab 3 -->
 <div id="tab3" class="tab">
   <div class="removed-clients-container">
     <div class="scrollable">

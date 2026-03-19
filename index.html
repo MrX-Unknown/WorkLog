@@ -2,175 +2,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Work Log</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Log</title>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f4f4f4;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
 
-h1 {
-  text-align: center;
-  font-size: 48px;
-}
+    h1 {
+      text-align: center;
+      font-size: 64px;
+      font-weight: bold;
+    }
 
-.form-container {
-  max-width: 600px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-}
+    .form-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-.form-group {
-  margin-bottom: 10px;
-}
+    .form-group {
+      margin-bottom: 10px;
+    }
 
-input, select {
-  width: 100%;
-  padding: 6px;
-}
+    .form-group label {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 12px;
+    }
 
-button {
-  padding: 6px;
-  cursor: pointer;
-}
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
 
-.tab { display: none; }
+    .form-group button {
+      padding: 6px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      width: 100%;
+    }
 
-.tab-button {
-  padding: 10px;
-  margin: 5px;
-  background: green;
-  color: white;
-  border: none;
-}
+    .form-group button:hover {
+      background-color: #45a049;
+    }
 
-.active-tab-button {
-  background: darkgreen;
-}
+    .history-container, .client-activity-container, .removed-clients-container {
+      margin-top: 30px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: auto;
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-}
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      word-wrap: break-word;
+    }
 
-.scrollable {
-  max-height: 250px;
-  overflow-y: auto;
-}
-</style>
+    thead th {
+      position: sticky;
+      top: 0;
+      background-color: #4CAF50;
+      color: white;
+      z-index: 1;
+    }
+
+    tbody tr:nth-child(even) { background-color: #f9f9f9; }
+    tbody tr:nth-child(odd) { background-color: #ffffff; }
+
+    tbody tr:hover { background-color: #e0f7fa; }
+
+    .scrollable {
+      max-height: 250px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .tab { display: none; }
+
+    #client-activity-table th, #client-activity-table td {
+      text-align: left;
+      border: 1px solid #ddd;
+      padding: 6px;
+    }
+
+    #client-activity-table th {
+      background-color: #4CAF50;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    #client-suggestions div, #activity-suggestions div {
+      padding: 6px;
+      cursor: pointer;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      margin: 2px 0;
+    }
+
+    #client-suggestions div:hover, #activity-suggestions div:hover {
+      background-color: #e0e0e0;
+    }
+
+    .tab-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    .tab-button:hover { background-color: #45a049; }
+    .active-tab-button { background-color: #45a049; }
+  </style>
 </head>
 
 <body>
 
 <h1>Work Log</h1>
 
-<div style="text-align:center;">
+<div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
-  <button class="tab-button" onclick="showTab(3)">Removed</button>
+  <button class="tab-button" onclick="showTab(3)">Removed Log</button>
 </div>
 
 <!-- TAB 1 -->
 <div id="tab1" class="tab" style="display:block;">
-<div class="form-container">
+  <div class="form-container">
 
-<div class="form-group">
-<input type="date" id="date">
-</div>
+    <div class="form-group">
+      <label>Date:</label>
+      <input type="date" id="date">
+    </div>
 
-<div class="form-group">
-<input type="text" id="client" placeholder="Client">
-<button onclick="addClient()">Add</button>
-<button onclick="removeClient()">Remove</button>
-<div id="client-suggestions"></div>
-</div>
+    <div class="form-group">
+      <label>Client:</label>
+      <div style="display:flex;">
+        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
+        <button type="button" onclick="addClient()">Add</button>
+        <button type="button" onclick="removeClient()" style="background:#f44336;">Remove</button>
+      </div>
+      <div id="client-suggestions" style="display:none;"></div>
+    </div>
 
-<div class="form-group">
-<input type="text" id="activity" placeholder="Activity" oninput="suggestActivity()">
-<div id="activity-suggestions"></div>
-</div>
+    <div class="form-group">
+      <label>Activity:</label>
+      <input type="text" id="activity" oninput="suggestActivity()">
+      <div id="activity-suggestions" style="display:none;"></div>
+    </div>
 
-<div class="form-group">
-<select id="status">
-<option value="new">New</option>
-<option value="ongoing">Ongoing</option>
-<option value="done">Done</option>
-</select>
-</div>
+    <div class="form-group">
+      <label>Status:</label>
+      <select id="status">
+        <option value="new">New</option>
+        <option value="ongoing">On Going</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
 
-<div class="form-group" id="update-container" style="display:none;">
-<input type="text" id="update" placeholder="Update">
-</div>
+    <div class="form-group" id="update-container" style="display:none;">
+      <label>Update:</label>
+      <input type="text" id="update">
+    </div>
 
-<button onclick="saveLog()">Save</button>
+    <div class="form-group">
+      <button onclick="saveLog()">Enter</button>
+    </div>
 
-</div>
+  </div>
 
-<div class="scrollable">
-<table id="history-table">
-<thead>
-<tr>
-<th>Date</th>
-<th>Client</th>
-<th>Activity</th>
-<th>Status</th>
-<th>Update</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+  <div class="history-container">
+    <div class="scrollable">
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Activity</th>
+            <th>Status</th>
+            <th>Update</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- TAB 2 -->
 <div id="tab2" class="tab">
-<select id="client-select" onchange="renderClientActivity()"></select>
+  <div class="client-activity-container">
+    <select id="client-select" onchange="renderClientActivity()"></select>
 
-<div class="scrollable">
-<table id="client-activity-table">
-<thead>
-<tr>
-<th>Date</th>
-<th>Activity</th>
-<th>Update</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+    <div class="scrollable">
+      <table id="client-activity-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Activity</th>
+            <th>Update</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- TAB 3 -->
 <div id="tab3" class="tab">
-<div class="scrollable">
-<table id="removed-clients-table">
-<thead><tr><th>Removed Clients</th></tr></thead>
-<tbody></tbody>
-</table>
-</div>
+  <div class="removed-clients-container">
+    <div class="scrollable">
+      <table id="removed-clients-table">
+        <thead><tr><th>Client</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script>
-let clientHistory = [];
-let activityHistory = {};
-let logData = [];
-let removedClients = [];
+let clientHistory = [], activityHistory = {}, logData = [], removedClients = [];
 
-/* TAB SWITCH */
+/* TAB */
 function showTab(n){
   document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
   document.getElementById('tab'+n).style.display='block';
@@ -178,14 +266,14 @@ function showTab(n){
 
 /* SAVE LOG */
 function saveLog(){
-  const date = dateInput.value;
+  const date = date.value;
   const client = clientInput.value.trim();
   const activity = activityInput.value.trim();
   const status = statusInput.value;
   const update = updateInput.value;
 
   if(!date || !client || !activity){
-    alert("Fill all fields");
+    alert("Fill required fields");
     return;
   }
 
@@ -197,7 +285,7 @@ function saveLog(){
   }
 
   saveStorage();
-  updateTable();
+  updateHistoryTable();
   renderClientDropdown();
 
   activityInput.value="";
@@ -205,7 +293,7 @@ function saveLog(){
 }
 
 /* TABLE */
-function updateTable(){
+function updateHistoryTable(){
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML="";
 
@@ -222,11 +310,10 @@ function updateTable(){
   });
 }
 
-/* DELETE */
 function deleteLog(i){
   logData.splice(i,1);
   saveStorage();
-  updateTable();
+  updateHistoryTable();
 }
 
 /* CLIENT */
@@ -252,6 +339,42 @@ function removeClient(){
     renderRemoved();
     renderClientDropdown();
   }
+}
+
+/* SUGGEST CLIENT */
+function suggestClient(){
+  const input = clientInput.value.toLowerCase();
+  const box = document.getElementById("client-suggestions");
+
+  let list = clientHistory.filter(c=>c.toLowerCase().includes(input));
+
+  box.innerHTML = list.map(c=>`<div onclick="selectClient('${c}')">${c}</div>`).join('');
+  box.style.display = list.length ? 'block':'none';
+}
+
+function selectClient(c){
+  clientInput.value = c;
+  document.getElementById("client-suggestions").style.display='none';
+}
+
+/* ACTIVITY */
+const activityInput = document.getElementById("activity");
+
+function suggestActivity(){
+  const client = clientInput.value;
+  const box = document.getElementById("activity-suggestions");
+
+  if(!activityHistory[client]) return;
+
+  let list = activityHistory[client];
+
+  box.innerHTML = list.map(a=>`<div onclick="selectActivity('${a}')">${a}</div>`).join('');
+  box.style.display = list.length ? 'block':'none';
+}
+
+function selectActivity(a){
+  activityInput.value = a;
+  document.getElementById("activity-suggestions").style.display='none';
 }
 
 /* DROPDOWN */
@@ -287,30 +410,13 @@ function renderRemoved(){
   });
 }
 
-/* ACTIVITY SUGGEST */
-const activityInput = document.getElementById("activity");
-
-function suggestActivity(){
-  const client = clientInput.value;
-  const box = document.getElementById("activity-suggestions");
-
-  if(!activityHistory[client]) return;
-
-  let list = activityHistory[client];
-  box.innerHTML = list.map(a=>`<div onclick="selectActivity('${a}')">${a}</div>`).join("");
-}
-
-function selectActivity(a){
-  activityInput.value = a;
-}
-
-/* STATUS SHOW UPDATE */
+/* STATUS */
 const statusInput = document.getElementById("status");
 const updateInput = document.getElementById("update");
 
 statusInput.addEventListener("change",()=>{
   document.getElementById("update-container").style.display =
-    statusInput.value==="new" ? "none" : "block";
+    statusInput.value==="new" ? "none":"block";
 });
 
 /* STORAGE */
@@ -327,7 +433,7 @@ function loadStorage(){
   activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
   removedClients = JSON.parse(localStorage.getItem("removed")) || [];
 
-  updateTable();
+  updateHistoryTable();
   renderClientDropdown();
   renderRemoved();
 }

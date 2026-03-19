@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work Log</title>
-  <!-- Link to your external CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +18,7 @@
 </div>
 
 <!-- TAB 1: Activity Log -->
-<div id="tab1" class="tab" style="display: block;">
+<div id="tab1" class="tab" style="display:block;">
   <div id="work-log-section">
     <div class="form-group">
       <label for="date">Date:</label>
@@ -29,13 +28,13 @@
     <div class="form-group client-row">
       <label for="client">Client:</label>
       <input type="text" id="client" placeholder="Enter Client" oninput="suggestClient()" onfocus="suggestClient()">
-      <ul id="client-suggestions" style="display: none;"></ul>
+      <ul id="client-suggestions" style="display:none;"></ul>
     </div>
 
     <div class="form-group">
       <label for="activity">Activity:</label>
       <input type="text" id="activity" placeholder="Enter Activity" oninput="suggestActivity()">
-      <ul id="activity-suggestions" style="display: none;"></ul>
+      <ul id="activity-suggestions" style="display:none;"></ul>
     </div>
 
     <div class="form-group">
@@ -47,7 +46,7 @@
       </select>
     </div>
 
-    <div class="form-group" id="update-container" style="display: none;">
+    <div class="form-group" id="update-container" style="display:none;">
       <label for="update">Update:</label>
       <input type="text" id="update" placeholder="Enter Update">
     </div>
@@ -110,7 +109,7 @@
   </div>
 </div>
 
-<!-- Link to your external JS -->
+<!-- Link to your separate JS -->
 <script src="script.js"></script>
 
 </body>

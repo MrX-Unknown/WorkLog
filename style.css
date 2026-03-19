@@ -1,19 +1,18 @@
-/* General Body Styling */
+/* Global Styling */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: #f3f4f6; /* Light pastel background */
+  background-color: #f9f9f9; /* Light background */
 }
 
-/* Header Styling */
 h1 {
   text-align: center;
   font-size: 36px;
   color: #4CAF50; /* Pastel green */
 }
 
-/* Tab Button Styling */
+/* Tab Buttons Styling */
 .tab-button {
   display: inline-block;
   padding: 12px 24px;
@@ -28,7 +27,7 @@ h1 {
 }
 
 .tab-button:hover {
-  background-color: #45a049; /* Darker pastel green */
+  background-color: #45a049;
 }
 
 .active-tab-button {
@@ -120,77 +119,6 @@ tbody tr:hover {
   white-space: nowrap;
 }
 
-/* Hamburger Menu and Settings Panel */
-#hamburger-menu {
-  font-size: 30px;
-  cursor: pointer;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 999;
-}
-
-.settings-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 250px;
-  height: 100%;
-  background-color: white;
-  display: none;
-  flex-direction: column;
-  padding: 20px;
-  z-index: 1000;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.settings-panel h3 {
-  text-align: center;
-  color: #4CAF50;
-}
-
-.color-option {
-  padding: 10px;
-  margin: 5px;
-  background-color: #f1f1f1;
-  border: none;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-
-.color-option:hover {
-  background-color: #ddd;
-}
-
-.color-option.active {
-  background-color: #4CAF50;
-  color: white;
-}
-
-/* Suggestion Box Styling */
-#cem-suggestions, #attorney-suggestions, #client-suggestions, #activity-suggestions {
-  border: 1px solid #ccc;
-  background-color: white;
-  max-height: 150px;
-  overflow-y: auto;
-  padding: 5px 0;
-  width: 100%;
-  box-sizing: border-box;
-  position: absolute;
-  z-index: 9999;
-  display: none;
-}
-
-#cem-suggestions div, #attorney-suggestions div, #client-suggestions div, #activity-suggestions div {
-  padding: 8px 10px;
-  cursor: pointer;
-}
-
-#cem-suggestions div:hover, #attorney-suggestions div:hover, #client-suggestions div:hover, #activity-suggestions div:hover {
-  background-color: #e0f7fa;
-}
-
 /* Input Box for Date, Client, Activity etc */
 .input-box {
   display: flex;
@@ -222,4 +150,27 @@ tbody tr:hover {
   display: none;
   margin-top: 10px;
   width: 100%;
+}
+
+/* Auto-Suggest Box Styling */
+.suggestion-box {
+  border: 1px solid #ccc;
+  background-color: white;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 9999;
+  display: none;
+}
+
+.suggestion-box div {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.suggestion-box div:hover {
+  background-color: #e0f7fa;
 }

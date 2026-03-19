@@ -1,61 +1,43 @@
-/* Base colors */
-:root {
-  --pastel-pink: #ffcccb;
-  --pastel-green: #b2e8b2;
-  --pastel-blue: #cce4f2;
-  --pastel-yellow: #fff7cc;
-  --pastel-purple: #e0d0ff;
-  --white: #ffffff;
-  --light-grey: #f8f9fa;
-  --grey: #cccccc;
-  --dark-green: #4CAF50;
-}
-
+/* Global */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: var(--light-grey);
+  background-color: #fdf6f0; /* Pastel background */
 }
 
 h1 {
   text-align: center;
-  font-size: 40px;
+  font-size: 48px;
   font-weight: bold;
-  color: var(--dark-green);
+  color: #556b2f; /* Pastel-green heading */
 }
 
+/* Tabs */
 .tab-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: var(--pastel-green);
-  color: var(--white);
+  margin: 5px;
+  background-color: #a2d5c6; /* Pastel green */
+  color: #333;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  margin: 10px 5px;
 }
 
-.tab-button:hover {
-  background-color: var(--dark-green);
+.tab-button.active-tab-button {
+  background-color: #79c7a5; /* Darker pastel green */
 }
 
-.active-tab-button {
-  background-color: var(--dark-green);
-}
-
-.tab {
-  display: none;
-}
-
+/* Form container */
 .form-container {
   max-width: 600px;
   margin: 20px auto;
-  background-color: var(--white);
-  padding: 10px;
+  background-color: #fff7f3; /* Pastel container */
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .form-group {
@@ -64,112 +46,84 @@ h1 {
 
 .form-group label {
   display: block;
-  margin-bottom: 3px;
-  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 4px 8px;
-  font-size: 12px;
-  border: 1px solid var(--grey);
-  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.form-group button {
-  padding: 6px 12px;
-  background-color: var(--dark-green);
-  color: var(--white);
+/* Update container hidden by default */
+#update-container {
+  display: none;
+}
+
+/* Buttons */
+button {
+  padding: 8px 12px;
+  background-color: #a2d5c6;
+  color: #333;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
-  width: 100%;
 }
 
-.form-group button:hover {
-  background-color: var(--dark-green);
+button:hover {
+  background-color: #79c7a5;
 }
 
-.history-container,
-.client-activity-container,
-.removed-clients-container {
-  margin-top: 30px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  overflow-x: auto;
-}
-
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
-th,
-td {
+th, td {
   padding: 8px;
+  border: 1px solid #ddd;
+  word-wrap: break-word;
   text-align: left;
-  border-bottom: 1px solid var(--grey);
 }
 
 thead th {
-  background-color: var(--dark-green);
-  color: var(--white);
+  position: sticky;
+  top: 0;
+  background-color: #a2d5c6;
+  color: #333;
+  z-index: 1;
 }
 
-tbody tr:nth-child(even) {
-  background-color: var(--pastel-yellow);
-}
+tbody tr:nth-child(even) { background-color: #fdf0e7; }
+tbody tr:nth-child(odd) { background-color: #fff7f3; }
+tbody tr:hover { background-color: #f0f8ff; }
 
-tbody tr:nth-child(odd) {
-  background-color: var(--pastel-blue);
-}
-
-tbody tr:hover {
-  background-color: var(--pastel-pink);
-}
-
+/* Scrollable tables */
 .scrollable {
   max-height: 250px;
   overflow-y: auto;
-  border: 1px solid var(--grey);
   border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
+/* Suggestions */
 #client-suggestions div,
 #activity-suggestions div {
   padding: 6px;
   cursor: pointer;
-  background-color: var(--white);
-  border: 1px solid var(--grey);
+  background-color: #fff;
+  border: 1px solid #ddd;
   margin: 2px 0;
 }
 
 #client-suggestions div:hover,
 #activity-suggestions div:hover {
-  background-color: var(--pastel-green);
-}
-
-.client-row {
-  display: flex;
-  gap: 5px;
-  width: 100%;
-}
-
-.client-row input {
-  flex: 0 0 75%;
-  height: 26px;
-}
-
-.client-row button {
-  flex: 0 0 12.5%;
-  height: 26px;
-  padding: 0;
-}
-
-#client-select {
-  width: 100%;
-  height: 36px;
+  background-color: #e0f0ea;
 }

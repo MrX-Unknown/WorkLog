@@ -10,28 +10,37 @@
 
 <h1>Work Log</h1>
 
-<!-- Tab Buttons -->
 <div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
   <button class="tab-button" onclick="showTab(3)">Removed Log</button>
 </div>
 
-<!-- Tab 1: Activity Log -->
+<!-- TAB 1 -->
 <div id="tab1" class="tab" style="display:block;">
-  <!-- Form for Activity Log -->
   <div class="form-container">
-    <!-- Form fields for Date, Client, Activity, Status, Update -->
     <div class="form-group">
       <label>Date:</label>
       <input type="date" id="date">
     </div>
 
+    <!-- NEW: CEM -->
+    <div class="form-group">
+      <label>CEM:</label>
+      <input type="text" id="cem" oninput="suggestCEM()" onfocus="suggestCEM()">
+      <div id="cem-suggestions" style="display:none;"></div>
+    </div>
+
+    <!-- NEW: Atty in Charge -->
+    <div class="form-group">
+      <label>Atty. in Charge:</label>
+      <input type="text" id="atty" oninput="suggestAtty()" onfocus="suggestAtty()">
+      <div id="atty-suggestions" style="display:none;"></div>
+    </div>
+
     <div class="form-group">
       <label>Client:</label>
-      <div class="client-row">
-        <input type="text" id="client" oninput="suggestClient()">
-      </div>
+      <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
       <div id="client-suggestions" style="display:none;"></div>
     </div>
 
@@ -60,7 +69,6 @@
     </div>
   </div>
 
-  <!-- History Table -->
   <div class="history-container">
     <div class="scrollable">
       <table id="history-table">
@@ -71,6 +79,8 @@
             <th>Activity</th>
             <th>Status</th>
             <th>Update</th>
+            <th>CEM</th>
+            <th>Atty. in Charge</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -80,9 +90,10 @@
   </div>
 </div>
 
-<!-- Tab 2: Client Log -->
+<!-- TAB 2 -->
 <div id="tab2" class="tab">
   <div class="client-activity-container">
+    <label>Select Client:</label>
     <select id="client-select" onchange="renderClientActivity()"></select>
 
     <div class="scrollable">
@@ -93,6 +104,8 @@
             <th>Activity</th>
             <th>Update</th>
             <th>Status</th>
+            <th>CEM</th>
+            <th>Atty. in Charge</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -101,7 +114,7 @@
   </div>
 </div>
 
-<!-- Tab 3: Removed Clients Log -->
+<!-- TAB 3 -->
 <div id="tab3" class="tab">
   <div class="removed-clients-container">
     <div class="scrollable">

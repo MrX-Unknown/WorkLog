@@ -97,16 +97,20 @@ function saveLog() {
 
   logData.push({ date, client, activity, status, update: updateVal });
 
-  // Persist
-  localStorage.setItem("clients", JSON.stringify(clientHistory));
-  localStorage.setItem("activities", JSON.stringify(activityHistory));
-  localStorage.setItem("workLogs", JSON.stringify(logData));
+  // Persist to localStorage if available
+  if (isLocalStorageAvailable()) {
+    localStorage.setItem("clients", JSON.stringify(clientHistory));
+    localStorage.setItem("activities", JSON.stringify(activityHistory));
+    localStorage.setItem("workLogs", JSON.stringify(logData));
+  } else {
+    alert("LocalStorage is not available. Data will not persist.");
+  }
 
   updateHistoryTable();
   renderClientDropdown();
   renderClientActivity();
 
-  // Reset
+  // Reset fields
   document.getElementById('date').value = '';
   document.getElementById('client').value = '';
   document.getElementById('activity').value = '';
@@ -156,10 +160,19 @@ function editLog(i) {
 }
 
 function deleteLog(i) {
-  if(confirm("Are you sure?")) {
-    logData.splice(i,1);
-    // Remove activity history if necessary
-    localStorage.setItem("workLogs", JSON.stringify(logData));
+  if (confirm("Are you sure you want to delete this log?")) {
+    logData.splice(i, 1);
+
+    // If no logs left, reset clientHistory and activityHistory
+    if (logData.length === 0) {
+      clientHistory = [];
+      activityHistory = {};
+      if (isLocalStorageAvailable()) {
+        localStorage.setItem("clients", JSON.stringify(clientHistory));
+        localStorage.setItem("activities", JSON.stringify(activityHistory));
+        localStorage.setItem("workLogs", JSON.stringify(logData));
+      }
+    }
 
     // Remove client if no more logs exist
     clientHistory = [...new Set(logData.map(l => l.client))];
@@ -169,8 +182,11 @@ function deleteLog(i) {
       if(!activityHistory[l.client].includes(l.activity)) activityHistory[l.client].push(l.activity);
     });
 
-    localStorage.setItem("clients", JSON.stringify(clientHistory));
-    localStorage.setItem("activities", JSON.stringify(activityHistory));
+    if (isLocalStorageAvailable()) {
+      localStorage.setItem("clients", JSON.stringify(clientHistory));
+      localStorage.setItem("activities", JSON.stringify(activityHistory));
+      localStorage.setItem("workLogs", JSON.stringify(logData));
+    }
 
     updateHistoryTable();
     renderClientDropdown();
@@ -207,3 +223,15 @@ function renderClientActivity() {
 
 // ---------------- Client-select change listener
 document.getElementById('client-select').addEventListener('change', renderClientActivity);
+
+// ---------------- LocalStorage Check (Cross-browser compatibility)
+function isLocalStorageAvailable() {
+  try {
+    const test = '__test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

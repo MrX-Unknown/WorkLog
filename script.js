@@ -55,7 +55,6 @@ function suggestLawyer() {
 function selectClient(client) {
   document.getElementById('client').value = client;
   document.getElementById('client-suggestions').style.display = 'none';
-  suggestActivity();
 }
 
 function selectCem(cem) {
@@ -108,7 +107,12 @@ function saveLog() {
   renderClientDropdown();
   renderClientActivity();
 
-  // Reset fields
+  // Reset form fields after saving data
+  resetFormFields();
+}
+
+// ---------------- Reset form fields (clearing all input boxes)
+function resetFormFields() {
   document.getElementById('date').value = '';
   document.getElementById('client').value = '';
   document.getElementById('cem').value = '';
@@ -116,7 +120,7 @@ function saveLog() {
   document.getElementById('activity').value = '';
   document.getElementById('status').value = 'new';
   document.getElementById('update').value = '';
-  document.getElementById('update-container').style.display = 'none';
+  document.getElementById('update-container').style.display = 'none'; // Hide update field
 }
 
 // ---------------- Update history table (with CEM and Lawyer beside Date)

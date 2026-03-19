@@ -17,49 +17,8 @@ function showTab(n) {
   document.querySelectorAll('.tab-button')[n - 1].classList.add('active-tab-button');
 }
 
-// --------------------------- Color Scheme Switch ---------------------------
-
-// Function to change color scheme
-function setColorScheme(scheme) {
-  document.body.className = scheme;
-  localStorage.setItem('colorScheme', scheme);
-}
-
-// Initialize color scheme from localStorage
-const savedColorScheme = localStorage.getItem('colorScheme') || 'pastel';
-setColorScheme(savedColorScheme);
-
 // --------------------------- Client Auto-Suggest ---------------------------
 
-// Suggest CEM
-function suggestCem() {
-  const input = document.getElementById('cem').value;
-  const box = document.getElementById('cem-suggestions');
-  let suggestions = cemHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
-  box.innerHTML = suggestions.map(c => `<div onclick="selectCem('${c}')">${c}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
-}
-
-function selectCem(c) {
-  document.getElementById('cem').value = c;
-  document.getElementById('cem-suggestions').style.display = 'none';
-}
-
-// Suggest Attorney
-function suggestAttorney() {
-  const input = document.getElementById('attorney').value;
-  const box = document.getElementById('attorney-suggestions');
-  let suggestions = attorneyHistory.filter(a => a.toLowerCase().includes(input.toLowerCase()));
-  box.innerHTML = suggestions.map(a => `<div onclick="selectAttorney('${a}')">${a}</div>`).join('');
-  box.style.display = suggestions.length ? 'block' : 'none';
-}
-
-function selectAttorney(a) {
-  document.getElementById('attorney').value = a;
-  document.getElementById('attorney-suggestions').style.display = 'none';
-}
-
-// Suggest Client (in Tab 1)
 function suggestClient() {
   const input = document.getElementById('client').value;
   const box = document.getElementById('client-suggestions');
@@ -75,7 +34,6 @@ function selectClient(c) {
 
 // --------------------------- Activity Auto-Suggest ---------------------------
 
-// Suggest Activity (based on Client selected)
 function suggestActivity() {
   const client = document.getElementById('client').value;
   const input = document.getElementById('activity').value;
@@ -95,7 +53,6 @@ function selectActivity(a) {
 
 // --------------------------- Status Change Handling ---------------------------
 
-// Function to handle the display of update input based on status
 function handleStatusChange() {
   const status = document.getElementById('status').value;
   const updateContainer = document.getElementById('update-container');
@@ -108,7 +65,6 @@ function handleStatusChange() {
 
 // --------------------------- Save Data and Update Tables ---------------------------
 
-// Save work log
 function saveLog() {
   const date = document.getElementById('date').value;
   const cem = document.getElementById('cem').value.trim();
@@ -153,7 +109,7 @@ function saveLog() {
   document.getElementById('update-container').style.display = 'none';
 }
 
-// Update history table on Tab 1
+// Update history table
 function updateHistoryTable() {
   const tbody = document.querySelector("#history-table tbody");
   tbody.innerHTML = "";
@@ -185,56 +141,7 @@ function deleteLog(index) {
 
 // --------------------------- Render Client Dropdown in Tab 2 ---------------------------
 
-// Render client dropdown based on the client history
 function renderClientDropdown() {
   const select = document.getElementById("client-select");
   select.innerHTML = clientHistory.map(c => `<option>${c}</option>`).join('');
-}
-
-// --------------------------- Render Client Activity ---------------------------
-
-// Render client activities in Tab 2
-function renderClientActivity() {
-  const client = document.getElementById("client-select").value;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML = "";
-
-  const clientLogs = logData.filter(log => log.client === client);
-
-  clientLogs.forEach(log => {
-    let row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${log.date}</td>
-      <td>${log.cem}</td>
-      <td>${log.attorney}</td>
-      <td>${log.activity}</td>
-      <td>${log.status}</td>
-      <td>${log.update}</td>
-    `;
-  });
-}
-
-// --------------------------- Move Done Logs to Tab 3 ---------------------------
-
-// Move logs marked as "done" to Tab 3 and remove them from Tab 1 and Tab 2
-function moveDoneLogs() {
-  const doneLogs = logData.filter(log => log.status === 'done');
-  const tbody = document.querySelector("#accomplished-activity-table tbody");
-  tbody.innerHTML = "";
-
-  doneLogs.forEach(log => {
-    let row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${log.date}</td>
-      <td>${log.cem}</td>
-      <td>${log.attorney}</td>
-      <td>${log.activity}</td>
-      <td>${log.status}</td>
-      <td>${log.update}</td>
-    `;
-  });
-
-  // Remove the moved logs from the original data
-  logData = logData.filter(log => log.status !== 'done');
-  localStorage.setItem('workLogs', JSON.stringify(logData));
 }

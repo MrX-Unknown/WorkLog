@@ -1,23 +1,18 @@
-/* General body styles */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
   margin: 0;
   padding: 20px;
 }
 
-/* Title Styling */
-#title {
-  font-size: 24px;
+h1 {
   text-align: center;
-  margin-bottom: 20px;
+  font-size: 36px;
 }
 
-/* Tab button styles */
 .tab-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #a8d8e8;  /* Pastel color */
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -27,200 +22,107 @@ body {
 }
 
 .tab-button:hover {
-  background-color: #6dc0d2;  /* Slightly darker */
+  background-color: #45a049;
 }
 
 .active-tab-button {
-  background-color: #6dc0d2;
+  background-color: #45a049;
 }
 
-/* Hide all tabs by default */
 .tab {
   display: none;
 }
 
-/* Container for forms and tables */
-.form-container, .history-container {
-  margin-top: 20px;
-  background-color: #ffffff;
-  padding: 20px;
+.form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 10px;
   border-radius: 8px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Form input and select styling */
 .form-group {
   margin-bottom: 10px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
 .form-group input, .form-group select {
   width: 100%;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  padding: 6px 10px;
   font-size: 14px;
-}
-
-.form-group button {
-  padding: 10px 15px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-group button:hover {
-  background-color: #45a049;
+.history-container {
+  margin-top: 30px;
 }
 
-/* Client and Activity Suggestions box */
-#client-suggestions div, #activity-suggestions div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  margin: 5px 0;
-}
-
-#client-suggestions div:hover, #activity-suggestions div:hover {
-  background-color: #e0e0e0;
-}
-
-/* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+}
+
+thead th {
+  background-color: #4CAF50;
+  color: white;
 }
 
 th, td {
-  padding: 10px;
+  padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-/* Alternating Row Colors */
-tbody tr:nth-child(odd) { background-color: #f9f9f9; }
-tbody tr:nth-child(even) { background-color: #eaf7f7; }
-
-tbody tr:hover { background-color: #d0f4f4; }
-
-/* Sticky Header */
-thead th {
-  background-color: #4CAF50;
-  color: white;
-  position: sticky;
-  top: 0;
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-/* Scrollable table */
+tbody tr:hover {
+  background-color: #e0f7fa;
+}
+
 .scrollable {
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 6px;
 }
 
-/* Client Select box and Status dropdown */
-#client-select, #status {
-  width: 100%;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-/* Update container (only shown when status is 'Ongoing') */
-#update-container {
-  display: none;
-}
-
-/* Tab 3 - Accomplished Log Styling */
-#accomplished-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#accomplished-table th, #accomplished-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-#accomplished-table tbody tr:nth-child(odd) { background-color: #f9f9f9; }
-#accomplished-table tbody tr:nth-child(even) { background-color: #e0f7fa; }
-#accomplished-table tbody tr:hover { background-color: #f1f1f1; }
-
-#accomplished-table th {
-  background-color: #4CAF50;
-  color: white;
-  position: sticky;
-  top: 0;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-
-/* Auto-suggest client & activity boxes */
-#client-suggestions, #activity-suggestions {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ddd;
-  max-height: 150px;
-  width: 100%;
-  overflow-y: auto;
-  z-index: 1000;
-  margin-top: 5px;
-}
-
-#client-suggestions div, #activity-suggestions div {
-  padding: 10px;
+#hamburger-menu {
+  font-size: 30px;
   cursor: pointer;
-  background-color: #ffffff;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
 }
 
-#client-suggestions div:hover, #activity-suggestions div:hover {
-  background-color: #f0f0f0;
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #fff;
+  display: none;
+  flex-direction: column;
+  padding: 20px;
+  z-index: 1000;
 }
 
-/* Client, CEM, Atty Box alignment in Tab 1 */
-.client-row, .cem-row, .atty-row {
-  display: flex;
-  gap: 5px;
-  width: 100%;
+.settings-panel h3 {
+  text-align: center;
 }
 
-.client-row input, .cem-row input, .atty-row input {
-  flex: 0 0 75%;
-  height: 26px;
+.color-option {
+  padding: 10px;
+  margin: 5px;
+  background-color: #f1f1f1;
+  border: none;
+  cursor: pointer;
+  text-align: center;
 }
 
-.client-row button, .cem-row button, .atty-row button {
-  flex: 0 0 12.5%;
-  height: 26px;
-  padding: 0;
-}
-
-/* Fix Update field for ongoing status */
-.form-group input, .form-group select {
-  height: 26px;
+.color-option:hover {
+  background-color: #ddd;
 }

@@ -1,4 +1,4 @@
-// ---------------- DATA & STORAGE
+// DATA & STORAGE
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
@@ -52,8 +52,8 @@ function selectActivity(a){
 
 // ---------------- STATUS UPDATE
 document.getElementById('status').addEventListener('change', ()=>{
-  const uc = document.getElementById('update-container');
-  uc.style.display = document.getElementById('status').value === 'ongoing' ? 'block' : 'none';
+  const uc = document.getElementById('update');
+  uc.parentElement.style.display = document.getElementById('status').value === 'ongoing' ? 'block' : 'none';
   if(document.getElementById('status').value !== 'ongoing') document.getElementById('update').value = '';
 });
 
@@ -81,13 +81,12 @@ function saveLog(){
   updateHistoryTable();
   renderClientDropdown();
 
-  // Reset form
   document.getElementById('date').value = '';
   document.getElementById('client').value = '';
   document.getElementById('activity').value = '';
   document.getElementById('status').value = 'new';
   document.getElementById('update').value = '';
-  document.getElementById('update-container').style.display = 'none';
+  document.getElementById('update').parentElement.style.display = 'none';
 }
 
 // ---------------- HISTORY TABLE
@@ -99,8 +98,8 @@ function updateHistoryTable(){
     row.insertCell(0).innerText = log.date;
     row.insertCell(1).innerText = log.client;
     row.insertCell(2).innerText = log.activity;
-    row.insertCell(3).innerText = log.status;
-    row.insertCell(4).innerText = log.update;
+    row.insertCell(3).innerText = log.update;
+    row.insertCell(4).innerText = log.status;
 
     const actions = row.insertCell(5);
     const editBtn = document.createElement('button');
@@ -122,7 +121,7 @@ function editLog(index){
   document.getElementById('activity').value = log.activity;
   document.getElementById('status').value = log.status;
   if(log.status==='ongoing'){
-    document.getElementById('update-container').style.display='block';
+    document.getElementById('update').parentElement.style.display='block';
     document.getElementById('update').value = log.update;
   }
   deleteLog(index);

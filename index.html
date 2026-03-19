@@ -4,16 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work Log</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<!-- Hamburger Menu Button -->
+<div id="hamburger-menu" class="hamburger-menu">
+  &#9776;
+</div>
+
+<!-- Settings Panel -->
+<div id="settings-panel" class="settings-panel">
+  <h3>Choose Color Scheme</h3>
+  <button class="color-option" onclick="setColorScheme('pastel')">Pastel</button>
+  <button class="color-option" onclick="setColorScheme('dark')">Dark Mode</button>
+  <button class="color-option" onclick="setColorScheme('light')">Light Mode</button>
+  <button onclick="closeSettingsPanel()">Close</button>
+</div>
 
 <h1>Work Log</h1>
 
 <div style="text-align: center;">
   <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
   <button class="tab-button" onclick="showTab(2)">Client Log</button>
-  <button class="tab-button" onclick="showTab(3)">Removed Log</button>
+  <button class="tab-button" onclick="showTab(3)">Accomplished Log</button>
 </div>
 
 <!-- TAB 1 -->
@@ -24,23 +38,21 @@
       <input type="date" id="date">
     </div>
 
-    <!-- NEW: CEM -->
     <div class="form-group">
       <label>CEM:</label>
-      <input type="text" id="cem" oninput="suggestCEM()" onfocus="suggestCEM()">
+      <input type="text" id="cem" oninput="suggestCem()">
       <div id="cem-suggestions" style="display:none;"></div>
     </div>
 
-    <!-- NEW: Atty in Charge -->
     <div class="form-group">
       <label>Atty. in Charge:</label>
-      <input type="text" id="atty" oninput="suggestAtty()" onfocus="suggestAtty()">
-      <div id="atty-suggestions" style="display:none;"></div>
+      <input type="text" id="attorney" oninput="suggestAttorney()">
+      <div id="attorney-suggestions" style="display:none;"></div>
     </div>
 
     <div class="form-group">
       <label>Client:</label>
-      <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
+      <input type="text" id="client" oninput="suggestClient()">
       <div id="client-suggestions" style="display:none;"></div>
     </div>
 
@@ -52,7 +64,7 @@
 
     <div class="form-group">
       <label>Status:</label>
-      <select id="status">
+      <select id="status" onchange="handleStatusChange()">
         <option value="new">New</option>
         <option value="ongoing">On Going</option>
         <option value="done">Done</option>
@@ -70,30 +82,27 @@
   </div>
 
   <div class="history-container">
-    <div class="scrollable">
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>CEM</th> <!-- Added CEM here -->
-            <th>Atty. in Charge</th> <!-- Added Atty. in Charge here -->
-            <th>Client</th>
-            <th>Activity</th>
-            <th>Status</th>
-            <th>Update</th> <!-- Switch the position of Status and Update -->
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <table id="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>CEM</th>
+          <th>Atty. in Charge</th>
+          <th>Client</th>
+          <th>Activity</th>
+          <th>Status</th>
+          <th>Update</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 </div>
 
 <!-- TAB 2 -->
 <div id="tab2" class="tab">
   <div class="client-activity-container">
-    <label>Select Client:</label>
     <select id="client-select" onchange="renderClientActivity()"></select>
 
     <div class="scrollable">
@@ -101,11 +110,11 @@
         <thead>
           <tr>
             <th>Date</th>
-            <th>CEM</th> <!-- Added CEM here -->
-            <th>Atty. in Charge</th> <!-- Added Atty. in Charge here -->
+            <th>CEM</th>
+            <th>Atty. in Charge</th>
             <th>Activity</th>
-            <th>Update</th>
             <th>Status</th>
+            <th>Update</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -116,16 +125,25 @@
 
 <!-- TAB 3 -->
 <div id="tab3" class="tab">
-  <div class="removed-clients-container">
+  <div class="accomplished-activity-container">
     <div class="scrollable">
-      <table id="removed-clients-table">
-        <thead><tr><th>Client</th></tr></thead>
+      <table id="accomplished-activity-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>CEM</th>
+            <th>Atty. in Charge</th>
+            <th>Client</th>
+            <th>Activity</th>
+            <th>Status</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<script src="script.js"></script>
+<script src="scripts.js"></script>
 </body>
 </html>

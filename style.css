@@ -1,136 +1,132 @@
-/* Body & Title */
+/* Overall Body */
 body {
   font-family: Arial, sans-serif;
-  background-color: #fdf6f0;
   margin: 0;
   padding: 20px;
+  background-color: #fefcfb;
+  color: #333;
 }
 
+/* Title */
 h1 {
   text-align: center;
   font-size: 48px;
-  color: #6a5d7b;
+  color: #6c5ce7;
+  margin-bottom: 20px;
 }
 
-/* Tabs Buttons */
+/* Tabs */
+.tabs-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .tab-button {
-  display: inline-block;
   padding: 10px 20px;
-  margin: 5px;
+  margin: 0 5px;
+  background-color: #a29bfe;
+  color: white;
   border: none;
-  border-radius: 4px;
-  background-color: #d6cadd;
-  color: #333;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
 }
 
+.tab-button.active-tab-button {
+  background-color: #6c5ce7;
+}
+
 .tab-button:hover {
-  background-color: #bfaed7;
+  background-color: #8e77ff;
 }
 
-.active-tab-button {
-  background-color: #a78cb3;
-  color: white;
-}
+/* Hide tabs by default */
+.tab { display: none; }
 
-/* Forms */
+/* Form Styling */
 .form-container {
   max-width: 600px;
-  margin: 20px auto;
-  background-color: #fffaf3;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 0 auto 20px auto;
+  background-color: #fff0f5;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .form-group label {
   display: block;
-  font-weight: bold;
   margin-bottom: 5px;
+  font-weight: 600;
 }
 
-.form-group input, .form-group select {
+.form-group input, 
+.form-group select {
   width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
+  font-size: 14px;
 }
 
-/* Suggestions */
-.suggestions {
-  border: 1px solid #ddd;
+#update-container { display: none; }
+
+/* Suggestions Box */
+.suggestions-box {
+  border: 1px solid #ccc;
+  background-color: #fff;
   max-height: 120px;
   overflow-y: auto;
-  background-color: #fff;
-  margin-top: 2px;
-  border-radius: 4px;
+  position: relative;
 }
 
-.suggestions div {
-  padding: 6px;
+.suggestions-box div {
+  padding: 5px 8px;
   cursor: pointer;
 }
 
-.suggestions div:hover {
-  background-color: #e0dbe5;
+.suggestions-box div:hover {
+  background-color: #ffe6f0;
 }
 
-/* History & Tables */
-.history-container, .client-activity-container, .removed-clients-container {
-  max-width: 900px;
-  margin: 20px auto;
-  overflow-x: auto;
-}
-
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
 }
 
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
 }
 
 thead th {
-  background-color: #d6cadd;
-  color: #333;
+  background-color: #ffe6f0;
   position: sticky;
   top: 0;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f7f3f9;
+tbody tr:nth-child(even) { background-color: #faf0f5; }
+tbody tr:nth-child(odd) { background-color: #fff5fa; }
+
+tbody tr:hover { background-color: #ffe6f0; }
+
+button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-tbody tr:hover {
-  background-color: #f0e6f3;
-}
+button:hover { background-color: #8e77ff; }
 
 .scrollable {
   max-height: 250px;
   overflow-y: auto;
-}
-
-/* Tab 2 Select Client full width */
-.client-activity-container {
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-#client-select {
-  width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
 }

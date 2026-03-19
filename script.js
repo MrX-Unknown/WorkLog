@@ -64,12 +64,12 @@ function updateHistoryTable() {
   logData.forEach((log, index) => {
     const row = tbody.insertRow();
     row.insertCell(0).innerText = log.date;
-    row.insertCell(1).innerText = log.client;
-    row.insertCell(2).innerText = log.activity;
-    row.insertCell(3).innerText = log.status;
-    row.insertCell(4).innerText = log.update;
-    row.insertCell(5).innerText = log.cem;
-    row.insertCell(6).innerText = log.atty;
+    row.insertCell(1).innerText = log.cem;
+    row.insertCell(2).innerText = log.atty;
+    row.insertCell(3).innerText = log.client;
+    row.insertCell(4).innerText = log.activity;
+    row.insertCell(5).innerText = log.status;
+    row.insertCell(6).innerText = log.update;
 
     const actions = row.insertCell(7);
     const editBtn = document.createElement('button');
@@ -120,11 +120,11 @@ function renderClientActivity() {
   logData.filter(l=>l.client===client).forEach(l=>{
     const row = tbody.insertRow();
     row.insertCell(0).innerText = l.date;
-    row.insertCell(1).innerText = l.activity;
-    row.insertCell(2).innerText = l.update;
-    row.insertCell(3).innerText = l.status;
-    row.insertCell(4).innerText = l.cem;
-    row.insertCell(5).innerText = l.atty;
+    row.insertCell(1).innerText = l.cem;
+    row.insertCell(2).innerText = l.atty;
+    row.insertCell(3).innerText = l.activity;
+    row.insertCell(4).innerText = l.update;
+    row.insertCell(5).innerText = l.status;
   });
 }
 

@@ -224,4 +224,17 @@ function moveDoneLogs() {
 
   doneLogs.forEach(log => {
     let row = tbody.insertRow();
-    row.inner
+    row.innerHTML = `
+      <td>${log.date}</td>
+      <td>${log.cem}</td>
+      <td>${log.attorney}</td>
+      <td>${log.activity}</td>
+      <td>${log.status}</td>
+      <td>${log.update}</td>
+    `;
+  });
+
+  // Remove the moved logs from the original data
+  logData = logData.filter(log => log.status !== 'done');
+  localStorage.setItem('workLogs', JSON.stringify(logData));
+}

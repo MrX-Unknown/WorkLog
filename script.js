@@ -1,6 +1,7 @@
 let clientHistory = JSON.parse(localStorage.getItem("clients")) || [];
 let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
+
 let lastSelectedClient = null;
 
 // Function to show the appropriate tab
@@ -135,12 +136,4 @@ function renderClientActivity() {
   });
 
   Object.keys(grouped).forEach(act => {
-    grouped[act].forEach(l => {
-      const row = tbody.insertRow();
-      row.insertCell(0).innerText = l.date;
-      row.insertCell(1).innerText = l.activity;
-      row.insertCell(2).innerText = l.update;
-      row.insertCell(3).innerText = l.status;
-    });
-  });
-}
+    grouped[act].forEach(l =>

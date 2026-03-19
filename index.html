@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,21 +46,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
-    }
-
-    .form-group button {
-      padding: 6px 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      width: 100%;
-    }
-
-    .form-group button:hover {
-      background-color: #45a049;
+      height: 26px;
     }
 
     .history-container, .client-activity-container, .removed-clients-container {
@@ -144,6 +131,16 @@
 
     .tab-button:hover { background-color: #45a049; }
     .active-tab-button { background-color: #45a049; }
+
+    .client-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .client-row input {
+      width: 100%;
+      height: 26px;
+    }
   </style>
 </head>
 
@@ -169,9 +166,7 @@
     <div class="form-group">
       <label>Client:</label>
       <div class="client-row">
-        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()" style="flex: 0 0 75%;">
-        <button type="button" onclick="addClient()" style="flex: 0 0 12.5%;">Add</button>
-        <button type="button" onclick="removeClient()" style="flex: 0 0 12.5%; background:#f44336;">Remove</button>
+        <input type="text" id="client" oninput="suggestClient()" onfocus="suggestClient()">
       </div>
       <div id="client-suggestions" style="display:none;"></div>
     </div>
@@ -276,6 +271,10 @@ function saveLog(){
     return;
   }
 
+  if (!clientHistory.includes(client)) {
+    clientHistory.push(client);
+  }
+
   logData.push({date,client,activity,status,update});
 
   if(!activityHistory[client]) activityHistory[client]=[];
@@ -317,28 +316,6 @@ function deleteLog(i){
 
 /* CLIENT */
 const clientInput = document.getElementById("client");
-
-function addClient(){
-  let c = clientInput.value.trim();
-  if(c && !clientHistory.includes(c)){
-    clientHistory.push(c);
-    saveStorage();
-    renderClientDropdown();
-  }
-}
-
-function removeClient(){
-  let c = clientInput.value.trim();
-  let i = clientHistory.indexOf(c);
-
-  if(i!==-1){
-    clientHistory.splice(i,1);
-    removedClients.push(c);
-    saveStorage();
-    renderRemoved();
-    renderClientDropdown();
-  }
-}
 
 /* SUGGEST CLIENT */
 function suggestClient(){
@@ -442,4 +419,4 @@ window.onload = loadStorage;
 
 </body>
 </html>
-
+```

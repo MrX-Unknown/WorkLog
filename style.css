@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: #fdf6f0; /* pastel background */
+  background-color: #f9f9f9; /* Pastel background */
 }
 
 h1 {
@@ -13,7 +13,7 @@ h1 {
 .tab-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #a3d9c9;
+  background-color: #a3d9c9; /* Light pastel green */
   color: white;
   border: none;
   border-radius: 4px;
@@ -23,11 +23,11 @@ h1 {
 }
 
 .tab-button:hover {
-  background-color: #7cc1b0;
+  background-color: #7cc1b0; /* Darker green on hover */
 }
 
 .active-tab-button {
-  background-color: #7cc1b0;
+  background-color: #7cc1b0; /* Active tab highlight */
 }
 
 .tab {
@@ -67,7 +67,7 @@ table {
 }
 
 thead th {
-  background-color: #a3d9c9;
+  background-color: #a3d9c9; /* Pastel header */
   color: white;
 }
 

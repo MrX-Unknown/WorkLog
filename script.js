@@ -4,7 +4,7 @@ let activityHistory = JSON.parse(localStorage.getItem("activities")) || {};
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let lastSelectedClient = null;
 
-// Initialize the UI with persisted data
+// Initialize the UI
 updateHistoryTable();
 renderClientDropdown();
 renderClientActivity();
@@ -12,22 +12,23 @@ renderClientSuggestions();
 
 // ---------------- Suggestions functions
 function suggestClient() {
-  const input = document.getElementById('client').value;
+  const input = document.getElementById('client').value.toLowerCase();
   const box = document.getElementById('client-suggestions');
 
-  // Only suggest clients that exist in the data
-  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input.toLowerCase()));
+  const suggestions = clientHistory.filter(c => c.toLowerCase().includes(input));
   box.innerHTML = suggestions.map(c => `<div onclick="selectClient('${c}')">${c}</div>`).join('');
   box.style.display = suggestions.length ? 'block' : 'none';
+
+  autoSelectStatus();
 }
 
 function selectClient(client) {
   document.getElementById('client').value = client;
   document.getElementById('client-suggestions').style.display = 'none';
   suggestActivity();
+  autoSelectStatus();
 }
 
-// ---------------- Activity suggestion
 function suggestActivity() {
   const input = document.getElementById('activity').value.toLowerCase();
   const client = document.getElementById('client').value;
@@ -41,32 +42,31 @@ function suggestActivity() {
     box.style.display = 'none';
   }
 
-  // Auto-select Status if client & activity exist in logData
-  const matchingLog = logData.find(log => log.client === client && log.activity.toLowerCase() === input);
-  if (matchingLog) {
-    document.getElementById('status').value = 'ongoing';
-    document.getElementById('update-container').style.display = 'block';
-    document.getElementById('update').value = matchingLog.update || '';
-  } else {
-    document.getElementById('status').value = 'new';
-    document.getElementById('update-container').style.display = 'none';
-    document.getElementById('update').value = '';
-  }
+  autoSelectStatus();
 }
 
 function selectActivity(activity) {
   document.getElementById('activity').value = activity;
   document.getElementById('activity-suggestions').style.display = 'none';
+  autoSelectStatus();
+}
 
-  const client = document.getElementById('client').value;
-  const matchingLog = logData.find(log => log.client === client && log.activity === activity);
-  if (matchingLog) {
-    document.getElementById('status').value = 'ongoing';
-    document.getElementById('update-container').style.display = 'block';
-    document.getElementById('update').value = matchingLog.update || '';
+// ---------------- Auto-select "On Going" if client + activity exists
+function autoSelectStatus() {
+  const client = document.getElementById('client').value.trim();
+  const activity = document.getElementById('activity').value.trim();
+  const statusInput = document.getElementById('status');
+  const updateContainer = document.getElementById('update-container');
+
+  const match = logData.find(log => log.client === client && log.activity === activity);
+
+  if (match) {
+    statusInput.value = 'ongoing';
+    updateContainer.style.display = 'block';
+    document.getElementById('update').value = match.update || '';
   } else {
-    document.getElementById('status').value = 'new';
-    document.getElementById('update-container').style.display = 'none';
+    statusInput.value = 'new';
+    updateContainer.style.display = 'none';
     document.getElementById('update').value = '';
   }
 }
@@ -98,7 +98,6 @@ function saveLog() {
   logData.push({ date, client, activity, status, update: updateValue });
   if (logData.length > 15) logData.shift(); // Keep last 15 logs
 
-  // Persist everything
   localStorage.setItem('workLogs', JSON.stringify(logData));
   localStorage.setItem('clients', JSON.stringify(clientHistory));
   localStorage.setItem('activities', JSON.stringify(activityHistory));
@@ -129,16 +128,12 @@ function updateHistoryTable() {
     row.insertCell(4).innerText = log.update;
 
     const actions = row.insertCell(5);
-    actions.classList.add('action-buttons');
-
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edit';
-    editBtn.classList.add('edit-button');
     editBtn.onclick = () => editLog(index);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'Delete';
-    deleteBtn.classList.add('delete-button');
     deleteBtn.onclick = () => deleteLog(index);
 
     actions.appendChild(editBtn);
@@ -152,14 +147,8 @@ function editLog(index) {
   document.getElementById('date').value = log.date;
   document.getElementById('client').value = log.client;
   document.getElementById('activity').value = log.activity;
-  document.getElementById('status').value = log.status;
-
-  if (log.status === 'ongoing') {
-    document.getElementById('update-container').style.display = 'block';
-    document.getElementById('update').value = log.update;
-  }
-
-  deleteLog(index); // Remove before editing
+  autoSelectStatus();
+  deleteLog(index);
 }
 
 function deleteLog(index) {
@@ -168,7 +157,7 @@ function deleteLog(index) {
     localStorage.setItem('workLogs', JSON.stringify(logData));
     updateHistoryTable();
     renderClientActivity();
-    renderClientDropdown(); // Update Tab2 dropdown
+    renderClientDropdown();
   }
 }
 
@@ -176,7 +165,7 @@ function deleteLog(index) {
 function renderClientDropdown() {
   const select = document.getElementById('client-select');
   const prev = lastSelectedClient;
-  const activeClients = [...new Set(logData.map(l => l.client))]; // Only clients in data
+  const activeClients = [...new Set(logData.map(l => l.client))];
   select.innerHTML = activeClients.map(c => `<option value="${c}">${c}</option>`).join('');
   if (prev && activeClients.includes(prev)) select.value = prev;
   lastSelectedClient = select.value;

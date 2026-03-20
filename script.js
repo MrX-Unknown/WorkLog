@@ -205,6 +205,7 @@ function checkDuplicateStatus(){
 function moveGroupToDone(cem, lawyer, client, activity){
   logData.forEach(l => {
     if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
+      if(l.status !== 'done') l._prevStatus = l.status; // save previous status
       l.status='done';
     }
   });
@@ -267,6 +268,15 @@ function updateClientActivityTable(){
 document.getElementById('client-select').addEventListener('change', updateClientActivityTable);
 
 // ------------------- Tab 3 (Accomplished Log) -------------------
+function stringToColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+  return "#" + "00000".substring(0, 6 - c.length) + c;
+}
+
 function updateAccomplishedTable(){
   const tbody = document.querySelector("#accomplished-table tbody");
   tbody.innerHTML='';
@@ -279,7 +289,8 @@ function updateAccomplishedTable(){
     grouped[key].push(l);
   });
 
-  Object.values(grouped).forEach(group=>{
+  Object.entries(grouped).forEach(([key, group])=>{
+    const groupColor = stringToColor(key);
     group.forEach((l,i)=>{
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
@@ -290,8 +301,8 @@ function updateAccomplishedTable(){
       r.insertCell().innerText = l.update;
       const statusCell = r.insertCell();
       statusCell.innerText = l.status;
-      r.style.fontWeight = '700'; // bold done
-
+      r.style.fontWeight = '700';
+      r.style.backgroundColor = groupColor + '33';
       const actionCell = r.insertCell();
       actionCell.innerHTML = `<button onclick="revertDoneGroup('${group[0].cem}','${group[0].lawyer}','${group[0].client}','${group[0].activity}')">Edit</button>`;
     });
@@ -300,11 +311,17 @@ function updateAccomplishedTable(){
 
 // ------------------- Revert Done Group -------------------
 function revertDoneGroup(cem, lawyer, client, activity){
-  if(confirm("Revert this group back to On Going?")){
-    logData.forEach(l=>{
+  if(confirm("Revert this group back to previous status?")){
+    logData = logData.filter(l => {
       if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
-        l.status='ongoing';
+        if(l.status==='done' && l._prevStatus){
+          l.status = l._prevStatus;   // restore previous status
+          delete l._prevStatus;
+          return true;                // keep in logData
+        }
+        return l.status!=='done';     // remove original done rows
       }
+      return true;
     });
     localStorage.setItem("workLogs", JSON.stringify(logData));
     refreshAllTabs();

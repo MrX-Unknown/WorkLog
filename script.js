@@ -234,23 +234,47 @@ function moveGroupToDone(cem, lawyer, client, activity){
 }
 
 // ------------------- Tab 2 (Client Activity) -------------------
-function refreshTab2(){
-  updateClientDropdown();
-  updateClientActivityTable();
-}
+function updateClientActivityTable(){
+  const client = document.getElementById('client-select').value;
+  const tbody = document.querySelector("#client-activity-table tbody");
+  tbody.innerHTML = '';
 
-function updateClientDropdown(){
-  const clientSelect = document.getElementById('client-select');
-  const clients = [...new Set(logData.map(l=>l.client).filter(c=>{
-    return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
-  }))];
+  if(!client) return;
 
-  clientSelect.innerHTML = '<option value="">-- Select Client --</option>';
-  clients.forEach(c=>{
-    const opt = document.createElement('option');
-    opt.value = c;
-    opt.innerText = c;
-    clientSelect.appendChild(opt);
+  const filteredLogs = logData.filter(l => 
+    l.client === client && (l.status==='new'||l.status==='ongoing')
+  );
+
+  const grouped = {};
+  filteredLogs.forEach(l => {
+    const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
+    if(!grouped[key]) grouped[key] = [];
+    grouped[key].push(l);
+  });
+
+  Object.values(grouped).forEach(group => {
+
+    group.forEach(l => {
+      const r = tbody.insertRow();
+      r.insertCell().innerText = l.date;
+      r.insertCell().innerText = l.cem;
+      r.insertCell().innerText = l.lawyer;
+      r.insertCell().innerText = l.client;
+      r.insertCell().innerText = l.activity;
+      r.insertCell().innerText = l.update;
+
+      const statusCell = r.insertCell();
+      statusCell.innerText = l.status;
+
+      r.style.fontWeight = (l.status==='new') ? '700' : '400';
+    });
+
+    // ✅ single spacing row between groups
+    const spacer = tbody.insertRow();
+    const cell = spacer.insertCell();
+    cell.colSpan = 7;
+    cell.style.height = '4px';
+    cell.style.background = 'transparent';
   });
 }
 

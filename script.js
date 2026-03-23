@@ -1,4 +1,3 @@
-let previousTab = 1;
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let editIndex = null;
 
@@ -10,30 +9,10 @@ window.onload = () => {
 
 // ------------------- Tabs -------------------
 function showTab(n){
-  if(n !== 4) previousTab = n;
-
   document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
   document.getElementById("tab"+n).style.display="block";
-
   document.querySelectorAll(".tab-button").forEach(b=>b.classList.remove("active-tab-button"));
-  if(n <= 3){
-    document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
-  }
-
-  // Toggle UI visibility for Tab 4
-  const header = document.querySelector("h1");
-  const tabs = document.querySelector(".tabs");
-  const hamburger = document.querySelector(".hamburger-container");
-
-  if(n === 4){
-    header.style.display = "none";
-    tabs.style.display = "none";
-    hamburger.style.display = "none";
-  } else {
-    header.style.display = "block";
-    tabs.style.display = "flex";
-    hamburger.style.display = "block";
-  }
+  document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
 }
 
 // ------------------- Save / Enter -------------------
@@ -363,80 +342,3 @@ function refreshAllTabs(){
   refreshTab2();
   updateAccomplishedTable();
 }
-
-// Existing code remains here (all your original JS) ...
-
-// ------------------- Hamburger Button to Tab 4 -------------------
-document.getElementById('hamburger-btn').addEventListener('click', () => {
-  showTab(4);
-});
-
-// ------------------- back Button to Tab 4 -------------------
-document.getElementById('back-btn').addEventListener('click', () => {
-  showTab(previousTab);
-});
-
-// ------------------- Tab 2 (Client Activity) Updated -------------------
-function refreshTab2(){
-  updateClientDropdown();
-  updateClientActivityTable();
-}
-
-function updateClientDropdown(){
-  const clientSelect = document.getElementById('client-select');
-
-  const clients = [...new Set(
-    logData.map(l=>l.client).filter(c=>{
-      return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
-    })
-  )];
-
-  clientSelect.innerHTML = '<option value="">-- Select Client --</option>';
-
-  clients.forEach(c=>{
-    const opt = document.createElement('option');
-    opt.value = c;
-    opt.innerText = c;
-    clientSelect.appendChild(opt);
-  });
-}
-
-function updateClientActivityTable(){
-  const client = document.getElementById('client-select').value;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML = '';
-
-  if(!client) return;
-
-  const filteredLogs = logData.filter(l => 
-    l.client === client && (l.status==='new'||l.status==='ongoing')
-  );
-
-  const grouped = {};
-
-  filteredLogs.forEach(l => {
-    const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
-    if(!grouped[key]) grouped[key] = [];
-    grouped[key].push(l);
-  });
-
-  Object.values(grouped).forEach(group=>{
-    group.forEach(l=>{
-      const r = tbody.insertRow();
-
-      r.insertCell().innerText = l.date;
-      r.insertCell().innerText = l.cem;
-      r.insertCell().innerText = l.lawyer;
-      r.insertCell().innerText = l.client;
-      r.insertCell().innerText = l.activity;
-      r.insertCell().innerText = l.update;
-
-      const statusCell = r.insertCell();
-      statusCell.innerText = l.status;
-
-      r.style.fontWeight = (l.status==='new') ? '700' : '400';
-    });
-  });
-}
-
-document.getElementById('client-select').addEventListener('change', updateClientActivityTable);

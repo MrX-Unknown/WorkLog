@@ -233,51 +233,6 @@ function moveGroupToDone(cem, lawyer, client, activity){
   localStorage.setItem("workLogs", JSON.stringify(logData));
 }
 
-// ------------------- Tab 2 (Client Activity) -------------------
-function updateClientActivityTable(){
-  const client = document.getElementById('client-select').value;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML = '';
-
-  if(!client) return;
-
-  const filteredLogs = logData.filter(l => 
-    l.client === client && (l.status==='new'||l.status==='ongoing')
-  );
-
-  const grouped = {};
-  filteredLogs.forEach(l => {
-    const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
-    if(!grouped[key]) grouped[key] = [];
-    grouped[key].push(l);
-  });
-
-  Object.values(grouped).forEach(group => {
-
-    group.forEach(l => {
-      const r = tbody.insertRow();
-      r.insertCell().innerText = l.date;
-      r.insertCell().innerText = l.cem;
-      r.insertCell().innerText = l.lawyer;
-      r.insertCell().innerText = l.client;
-      r.insertCell().innerText = l.activity;
-      r.insertCell().innerText = l.update;
-
-      const statusCell = r.insertCell();
-      statusCell.innerText = l.status;
-
-      r.style.fontWeight = (l.status==='new') ? '700' : '400';
-    });
-
-    // ✅ single spacing row between groups
-    const spacer = tbody.insertRow();
-    const cell = spacer.insertCell();
-    cell.colSpan = 7;
-    cell.style.height = '4px';
-    cell.style.background = 'transparent';
-  });
-}
-
 // ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;

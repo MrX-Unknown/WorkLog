@@ -233,11 +233,11 @@ function updateClientDropdown(){
   });
 }
 
-// ------------------- UPDATED Tab 2: No first row/header, scrollable, 1-row spacing -------------------
+// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
-  const container = document.querySelector("#client-activity-table tbody");
-  container.innerHTML = '';
+  const tbody = document.querySelector("#client-activity-table tbody");
+  tbody.innerHTML = '';
 
   if(!client) return;
 
@@ -251,19 +251,8 @@ function updateClientActivityTable(){
     grouped[key].push(l);
   });
 
-  Object.values(grouped).forEach((group) => {
-    // Create a mini table for the group
-    const table = document.createElement('table');
-    table.style.width = '100%';
-    table.style.borderCollapse = 'collapse';
-    table.style.marginBottom = '4px'; // 1-row spacing
-    table.style.display = 'block';
-    table.style.maxHeight = '180px';
-    table.style.overflowY = 'auto';
-
-    // tbody for scrollable rows
-    const tbody = document.createElement('tbody');
-    group.forEach(l=>{
+  Object.values(grouped).forEach(group => {
+    group.forEach(l => {
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
       r.insertCell().innerText = l.cem;
@@ -275,10 +264,12 @@ function updateClientActivityTable(){
       statusCell.innerText = l.status;
       r.style.fontWeight = (l.status==='new') ? '700' : '400';
     });
-    table.appendChild(tbody);
-
-    // Append mini table to main container
-    container.appendChild(document.createElement('tr')).appendChild(document.createElement('td')).appendChild(table);
+    // Insert 1-row spacing after each group
+    const spacer = tbody.insertRow();
+    const cell = spacer.insertCell();
+    cell.colSpan = 7; // spans all table columns
+    cell.style.height = '4px';
+    cell.style.background = 'transparent';
   });
 }
 

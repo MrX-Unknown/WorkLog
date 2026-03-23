@@ -370,3 +370,15 @@ tbody tr:hover {
     font-size: 14px;
   }
 }
+
+/* ------------------- Hide Header & Tabs in Tab 4 ------------------- */
+#tab4 ~ * {
+  display: block;
+}
+
+/* Hide elements when Tab 4 is active */
+body:has(#tab4[style*="block"]) h1,
+body:has(#tab4[style*="block"]) .tabs,
+body:has(#tab4[style*="block"]) .hamburger-container {
+  display: none;
+}

@@ -233,7 +233,7 @@ function updateClientDropdown(){
   });
 }
 
-// UPDATED: Separate activity groups with 1-row spacing and scrollable rows
+// ------------------- UPDATED Tab 2: No first row/header, scrollable, 1-row spacing -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
   const container = document.querySelector("#client-activity-table tbody");
@@ -251,32 +251,17 @@ function updateClientActivityTable(){
     grouped[key].push(l);
   });
 
-  Object.values(grouped).forEach((group, gIndex) => {
+  Object.values(grouped).forEach((group) => {
     // Create a mini table for the group
     const table = document.createElement('table');
     table.style.width = '100%';
     table.style.borderCollapse = 'collapse';
-    table.style.marginBottom = '4px'; // 1-row spacing between groups
+    table.style.marginBottom = '4px'; // 1-row spacing
     table.style.display = 'block';
     table.style.maxHeight = '180px';
     table.style.overflowY = 'auto';
 
-    // Create table head (fixed first row)
-    const thead = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    ['Date','CEM','Lawyer','Client','Activity','Update','Status'].forEach(h=>{
-      const th = document.createElement('th');
-      th.innerText = h;
-      th.style.position = 'sticky';
-      th.style.top = '0';
-      th.style.background = '#b8e0d2';
-      th.style.zIndex = '1';
-      headRow.appendChild(th);
-    });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
-
-    // Create tbody for scrollable rows
+    // tbody for scrollable rows
     const tbody = document.createElement('tbody');
     group.forEach(l=>{
       const r = tbody.insertRow();

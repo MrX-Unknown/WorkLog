@@ -11,16 +11,17 @@
 <div class="app-container">
   <h1>Work Log Dashboard</h1>
 
+<!-- Hamburger -->
 <div class="hamburger-container">
   <button id="hamburger-btn">&#9776;</button>
 </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
-    <button class="tab-button" onclick="showTab(2)">Client Log</button>
-    <button class="tab-button" onclick="showTab(3)">Accomplished Log</button>
-  </div>
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button>
+  <button class="tab-button" onclick="showTab(2)">Client Log</button>
+  <button class="tab-button" onclick="showTab(3)">Accomplished Log</button>
+</div>
 
   <!-- TAB 1 -->
   <div id="tab1" class="tab" style="display:block;">
@@ -92,9 +93,11 @@
     </div>
   </div>
 
+<!-- TAB 2 (RESTORED ORIGINAL STRUCTURE) -->
 <div id="tab2" class="tab">
   <div class="card">
     <h2>Client Activity</h2>
+
     <select id="client-select"></select>
 
     <div class="scrollable">
@@ -144,7 +147,7 @@
 <!-- TAB 4 -->
 <div id="tab4" class="tab">
   <div class="card tab4-container">
-    
+
     <h1 class="tab4-title">Work Log</h1>
     <h3 class="tab4-subtitle">Settings</h3>
 
@@ -155,7 +158,6 @@
       <button>About Us</button>
     </div>
 
-    <!-- Back Button -->
     <button id="back-btn">←</button>
 
   </div>

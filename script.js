@@ -234,6 +234,28 @@ function moveGroupToDone(cem, lawyer, client, activity){
 }
 
 // ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
+// ------------------- Tab 2 (Client Activity) -------------------
+function refreshTab2(){
+  updateClientDropdown();
+  updateClientActivityTable();
+}
+
+function updateClientDropdown(){
+  const clientSelect = document.getElementById('client-select');
+  const clients = [...new Set(logData.map(l=>l.client).filter(c=>{
+    return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
+  }))];
+
+  clientSelect.innerHTML = '<option value="">-- Select Client --</option>';
+  clients.forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.innerText = c;
+    clientSelect.appendChild(opt);
+  });
+}
+
+// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
   const tbody = document.querySelector("#client-activity-table tbody");
@@ -241,12 +263,10 @@ function updateClientActivityTable(){
 
   if(!client) return;
 
-  const filteredLogs = logData.filter(l => 
-    l.client === client && (l.status==='new'||l.status==='ongoing')
-  );
+  const filteredLogs = logData.filter(l => l.client === client && (l.status==='new'||l.status==='ongoing'));
 
+  // Group by CEM-Lawyer-Client-Activity
   const grouped = {};
-
   filteredLogs.forEach(l => {
     const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
     if(!grouped[key]) grouped[key] = [];
@@ -254,7 +274,6 @@ function updateClientActivityTable(){
   });
 
   Object.values(grouped).forEach(group => {
-
     group.forEach(l => {
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
@@ -263,19 +282,15 @@ function updateClientActivityTable(){
       r.insertCell().innerText = l.client;
       r.insertCell().innerText = l.activity;
       r.insertCell().innerText = l.update;
-
       const statusCell = r.insertCell();
       statusCell.innerText = l.status;
-
       r.style.fontWeight = (l.status==='new') ? '700' : '400';
     });
-
-    // ✅ Visible spacer row
+    // Insert 1-row spacing after each group
     const spacer = tbody.insertRow();
     const cell = spacer.insertCell();
-    cell.colSpan = 7;
-    cell.innerHTML = '&nbsp;';  // prevents collapse
-    cell.style.height = '10px';
+    cell.colSpan = 7; // spans all table columns
+    cell.style.height = '4px';
     cell.style.background = 'transparent';
   });
 }

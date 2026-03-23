@@ -1,185 +1,28 @@
-/* ------------------- Global ------------------- */
-body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(135deg, #fdf6f0, #f0f8ff);
-  color: #444;
+/* Keep your original styles here (all previous CSS) */
+
+/* ------------------- Hamburger Menu ------------------- */
+.hamburger-container {
+  display: block;
+  text-align: left;
+  margin-bottom: 10px;
 }
 
-h1 {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 700;
-  color: #5a6c57;
-  margin-bottom: 20px;
-}
-
-/* ------------------- Tabs ------------------- */
-.tab-button {
-  padding: 10px 18px;
-  margin: 6px;
-  border-radius: 20px;
-  border: none;
-  background: #e6f4f1;
-  color: #4b5d5a;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.tab-button:hover {
-  background: #d2ece6;
-  transform: translateY(-2px);
-}
-
-.tab-button.active-tab-button {
+#hamburger-btn {
+  font-size: 28px;
   background: #b8e0d2;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* ------------------- Card Containers ------------------- */
-.form-container,
-.history-container,
-.client-activity-container,
-.removed-clients-container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #ffffffcc;
-  backdrop-filter: blur(8px);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-/* ------------------- Form ------------------- */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: #6b7a75;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #d6e4df;
-  background: #f9fdfc;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #b8e0d2;
-  box-shadow: 0 0 0 3px rgba(184,224,210,0.3);
-}
-
-/* ------------------- Buttons ------------------- */
-button {
-  padding: 10px 16px;
-  border-radius: 10px;
   border: none;
-  background: #b8e0d2;
-  color: #3d4f4a;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
 }
 
-button:hover {
+#hamburger-btn:hover {
   background: #a0d6c4;
   transform: translateY(-1px);
 }
 
-/* ------------------- Tables ------------------- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 10px;
-  text-align: left;
-}
-
-thead th {
-  background: #b8e0d2;
-  color: #3d4f4a;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-tbody tr {
-  transition: background 0.2s ease;
-}
-
-tbody tr:nth-child(even) {
-  background: #f4fbf9;
-}
-
-tbody tr:nth-child(odd) {
-  background: #ffffff;
-}
-
-tbody tr:hover {
-  background: #eaf7f3;
-}
-
-/* ------------------- Scrollable ------------------- */
-.scrollable {
-  max-height: 260px;
-  overflow-y: auto;
-  border-radius: 12px;
-  border: 1px solid #e0ece8;
-}
-
-/* ------------------- Suggestions ------------------- */
-.suggestions {
-  max-height: 120px;
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 10px;
-  margin-top: 5px;
-  border: 1px solid #d6e4df;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-}
-
-.suggestions div {
-  padding: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.suggestions div:hover {
-  background: #eaf7f3;
-}
-
-/* ------------------- Update Box Animation ------------------- */
-#update-container {
-  opacity: 0;
-  transform: translateY(-10px);
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-#update-container.visible {
-  opacity: 1;
-  transform: translateY(0);
-  max-height: 100px;
-}
-
-/* ------------------- Mobile Responsiveness ------------------- */
+/* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
 
   body {
@@ -204,27 +47,23 @@ tbody tr:hover {
     padding: 8px;
   }
 
-  /* Grid layout for form + table */
   .grid {
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
 
-  /* Cards take full width */
   .card {
     width: 100%;
     padding: 15px;
   }
 
-  /* Form Inputs */
   .form-group input,
   .form-group select {
     font-size: 14px;
     padding: 8px;
   }
 
-  /* Tables Scrollable horizontally */
   table {
     display: block;
     width: 100%;
@@ -236,7 +75,7 @@ tbody tr:hover {
   }
 
   thead {
-    display: none; /* hide table header on very small screens */
+    display: none;
   }
 
   tbody tr {
@@ -260,21 +99,17 @@ tbody tr:hover {
     color: #5a6c57;
   }
 
-  /* Suggestions dropdown */
   .suggestions {
     max-height: 100px;
     font-size: 13px;
   }
 
-  /* Buttons smaller */
   button {
     padding: 8px 12px;
     font-size: 13px;
   }
 
-  /* Scrollable container height for tables on mobile */
   .scrollable {
     max-height: 220px;
   }
-
 }

@@ -382,3 +382,52 @@ body:has(#tab4[style*="block"]) .tabs,
 body:has(#tab4[style*="block"]) .hamburger-container {
   display: none;
 }
+
+/* Hamburger top right */
+.hamburger-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+#hamburger-btn {
+  font-size: 20px;
+  padding: 5px 8px;
+  border-radius: 6px;
+}
+
+/* Tab 4 */
+.tab4-container {
+  text-align: center;
+  position: relative;
+  min-height: 400px;
+}
+
+.tab4-title {
+  font-size: 36px;
+  margin-bottom: 5px;
+  color: #5a6c57;
+}
+
+.tab4-subtitle {
+  font-size: 18px;
+  color: #7a8c86;
+  margin-bottom: 30px;
+}
+
+.tab4-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.tab4-buttons button {
+  width: 200px;
+}
+
+#back-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}

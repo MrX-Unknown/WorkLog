@@ -293,3 +293,80 @@ tbody tr:hover {
     max-height: 220px;
   }
 }
+
+/* ------------------- Hamburger (Top Right, Smaller) ------------------- */
+.hamburger-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+#hamburger-btn {
+  font-size: 20px;
+  padding: 5px 8px;
+  border-radius: 6px;
+}
+
+/* ------------------- Tab 4 Styling ------------------- */
+.tab4-container {
+  text-align: center;
+  position: relative;
+  min-height: 400px;
+}
+
+.tab4-title {
+  font-size: 36px;
+  margin-bottom: 5px;
+  color: #5a6c57;
+}
+
+.tab4-subtitle {
+  font-size: 18px;
+  color: #7a8c86;
+  margin-bottom: 30px;
+}
+
+/* Center Buttons */
+.tab4-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.tab4-buttons button {
+  width: 200px;
+  padding: 12px;
+  font-size: 15px;
+}
+
+/* ------------------- Back Button (Bottom Right) ------------------- */
+#back-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  font-size: 18px;
+  padding: 8px 12px;
+}
+
+/* ------------------- Mobile Adjustments ------------------- */
+@media screen and (max-width: 768px) {
+  .hamburger-container {
+    top: 10px;
+    right: 10px;
+  }
+
+  #hamburger-btn {
+    font-size: 18px;
+    padding: 4px 7px;
+  }
+
+  .tab4-title {
+    font-size: 28px;
+  }
+
+  .tab4-buttons button {
+    width: 160px;
+    font-size: 14px;
+  }
+}

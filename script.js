@@ -205,7 +205,7 @@ function checkDuplicateStatus(){
 function moveGroupToDone(cem, lawyer, client, activity){
   logData.forEach(l => {
     if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
-      if(l.status !== 'done') l._prevStatus = l.status; // save previous status
+      if(l.status !== 'done') l._prevStatus = l.status;
       l.status='done';
     }
   });
@@ -233,6 +233,7 @@ function updateClientDropdown(){
   });
 }
 
+// UPDATED: Separate activity groups with 3-row spacing
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
   const tbody = document.querySelector("#client-activity-table tbody");
@@ -242,6 +243,7 @@ function updateClientActivityTable(){
 
   const filteredLogs = logData.filter(l => l.client === client && (l.status==='new'||l.status==='ongoing'));
 
+  // Group by CEM-Lawyer-Client-Activity
   const grouped = {};
   filteredLogs.forEach(l => {
     const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
@@ -249,8 +251,8 @@ function updateClientActivityTable(){
     grouped[key].push(l);
   });
 
-  Object.values(grouped).forEach(group=>{
-    group.forEach(l=>{
+  Object.values(grouped).forEach((group, gIndex) => {
+    group.forEach((l) => {
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
       r.insertCell().innerText = l.cem;
@@ -262,6 +264,14 @@ function updateClientActivityTable(){
       statusCell.innerText = l.status;
       r.style.fontWeight = (l.status==='new') ? '700' : '400';
     });
+
+    // Add 3 empty rows as spacing between groups
+    if (gIndex < Object.values(grouped).length - 1) {
+      for(let i=0;i<3;i++){
+        const emptyRow = tbody.insertRow();
+        emptyRow.innerHTML = '<td colspan="7">&nbsp;</td>';
+      }
+    }
   });
 }
 
@@ -315,11 +325,11 @@ function revertDoneGroup(cem, lawyer, client, activity){
     logData = logData.filter(l => {
       if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
         if(l.status==='done' && l._prevStatus){
-          l.status = l._prevStatus;   // restore previous status
+          l.status = l._prevStatus;
           delete l._prevStatus;
-          return true;                // keep in logData
+          return true;
         }
-        return l.status!=='done';     // remove original done rows
+        return l.status!=='done';
       }
       return true;
     });

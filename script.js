@@ -8,15 +8,22 @@ window.onload = () => {
 };
 
 // ------------------- Tabs -------------------
-function showTab(n){
-  document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
-  document.getElementById("tab"+n).style.display="block";
-  document.querySelectorAll(".tab-button").forEach(b=>b.classList.remove("active-tab-button"));
-  document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
+function showTab(n) {
+  document.querySelectorAll(".tab").forEach(t => t.style.display = "none");
+  document.getElementById("tab" + n).style.display = "block";
+
+  document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active-tab-button"));
+  document.querySelectorAll(".tab-button")[n - 1].classList.add("active-tab-button");
+
+  // Clear suggestion boxes on tab switch
+  ['cem', 'lawyer', 'client', 'activity'].forEach(id => {
+    const box = document.getElementById(id + '-suggestions');
+    if (box) box.innerHTML = '';
+  });
 }
 
 // ------------------- Save / Enter -------------------
-function saveLog(){
+function saveLog() {
   const date = dateVal('date');
   const cem = textVal('cem');
   const lawyer = textVal('lawyer');
@@ -25,11 +32,11 @@ function saveLog(){
   const status = document.getElementById('status').value;
   const updateVal = textVal('update');
 
-  if(!date||!cem||!lawyer||!client||!activity) return alert("Fill all fields");
+  if (!date || !cem || !lawyer || !client || !activity) return alert("Fill all fields");
 
-  const newLog = {date,cem,lawyer,client,activity,status,update:updateVal};
+  const newLog = { date, cem, lawyer, client, activity, status, update: updateVal };
 
-  if(editIndex !== null){
+  if (editIndex !== null) {
     logData[editIndex] = newLog;
     editIndex = null;
   } else {
@@ -38,7 +45,7 @@ function saveLog(){
 
   localStorage.setItem("workLogs", JSON.stringify(logData));
 
-  if(status==='done'){
+  if (status === 'done') {
     moveGroupToDone(cem, lawyer, client, activity);
   }
 
@@ -47,26 +54,32 @@ function saveLog(){
 }
 
 // ------------------- Helpers -------------------
-function textVal(id){ return document.getElementById(id).value.trim(); }
-function dateVal(id){ return document.getElementById(id).value; }
+function textVal(id) { return document.getElementById(id).value.trim(); }
+function dateVal(id) { return document.getElementById(id).value; }
 
 // ------------------- Reset -------------------
-function resetForm(){
-  ['date','cem','lawyer','client','activity','update'].forEach(i=>{
-    if(document.getElementById(i)) document.getElementById(i).value='';
+function resetForm() {
+  ['date', 'cem', 'lawyer', 'client', 'activity', 'update'].forEach(i => {
+    if (document.getElementById(i)) document.getElementById(i).value = '';
   });
-  document.getElementById('status').value='new';
+  document.getElementById('status').value = 'new';
   handleStatusChange();
+
+  // Clear suggestions
+  ['cem', 'lawyer', 'client', 'activity'].forEach(id => {
+    const box = document.getElementById(id + '-suggestions');
+    if (box) box.innerHTML = '';
+  });
 }
 
 // ------------------- Tab 1 Table -------------------
-function updateHistoryTable(){
+function updateHistoryTable() {
   const tbody = document.querySelector("#history-table tbody");
-  tbody.innerHTML='';
+  tbody.innerHTML = '';
 
-  logData.forEach((l,i)=>{
+  logData.forEach((l, i) => {
     const r = tbody.insertRow();
-    Object.values(l).forEach(v=>r.insertCell().innerText=v);
+    Object.values(l).forEach(v => r.insertCell().innerText = v);
 
     const act = r.insertCell();
     act.innerHTML = `
@@ -77,85 +90,83 @@ function updateHistoryTable(){
 }
 
 // ------------------- Edit -------------------
-function editLog(i){
+function editLog(i) {
   const l = logData[i];
   editIndex = i;
 
-  Object.keys(l).forEach(k=>{
-    if(document.getElementById(k)) document.getElementById(k).value = l[k];
+  Object.keys(l).forEach(k => {
+    if (document.getElementById(k)) document.getElementById(k).value = l[k];
   });
 
   handleStatusChange();
 }
 
 // ------------------- Delete -------------------
-function deleteLog(i){
-  if(confirm("Delete this record?")){
-    logData.splice(i,1);
+function deleteLog(i) {
+  if (confirm("Delete this record?")) {
+    logData.splice(i, 1);
     localStorage.setItem("workLogs", JSON.stringify(logData));
     refreshAllTabs();
   }
 }
 
 // ------------------- Status UI -------------------
-function handleStatusChange(){
+function handleStatusChange() {
   const box = document.getElementById('update-container');
   const status = document.getElementById('status').value;
 
-  if(status==='ongoing'){
-    box.style.display='block';
+  if (status === 'ongoing') {
     box.classList.add('visible');
   } else {
-    box.style.display='none';
     box.classList.remove('visible');
   }
 }
 
 // ------------------- Tab 1 Suggestions & Sequential Input -------------------
-function suggest(id){
-  const box = document.getElementById(id+'-suggestions');
-  if(!box) return;
+function suggest(id) {
+  const box = document.getElementById(id + '-suggestions');
+  if (!box) return;
 
-  if(!canTypeNext(id)) return box.innerHTML='';
+  if (!canTypeNext(id)) return box.innerHTML = '';
 
   const input = textVal(id).toLowerCase();
   const values = getValidSuggestions(id);
 
-  box.innerHTML='';
-  values.filter(v=>v.toLowerCase().includes(input)).slice(0,5)
-    .forEach(v=>{
-      const d=document.createElement('div');
-      d.innerText=v;
-      d.onclick=()=>{
-        document.getElementById(id).value=v;
-        box.innerHTML='';
-        checkDuplicateStatus();
+  box.innerHTML = '';
+  values.filter(v => v.toLowerCase().includes(input)).slice(0, 5)
+    .forEach(v => {
+      const d = document.createElement('div');
+      d.innerText = v;
+      d.onclick = () => {
+        document.getElementById(id).value = v;
+        box.innerHTML = '';
+        checkDuplicateStatus(editIndex === null);
       };
       box.appendChild(d);
     });
 }
 
-function getValidSuggestions(id){
-  if(logData.length===0) return [];
-  if(id==='cem') return [...new Set(logData.map(l=>l.cem))];
-  if(id==='lawyer') return [...new Set(logData.map(l=>l.lawyer))];
-  if(id==='client') return [...new Set(logData.map(l=>l.client))];
-  if(id==='activity') return [...new Set(logData.map(l=>l.activity))];
+function getValidSuggestions(id) {
+  if (logData.length === 0) return [];
+  if (id === 'cem') return [...new Set(logData.map(l => l.cem))];
+  if (id === 'lawyer') return [...new Set(logData.map(l => l.lawyer))];
+  if (id === 'client') return [...new Set(logData.map(l => l.client))];
+  if (id === 'activity') return [...new Set(logData.map(l => l.activity))];
   return [];
 }
 
-function canTypeNext(id){
-  if(id==='cem') return textVal('date') !== '';
-  if(id==='lawyer') return textVal('cem') !== '';
-  if(id==='client') return textVal('lawyer') !== '';
-  if(id==='activity') return textVal('client') !== '';
+function canTypeNext(id) {
+  if (id === 'cem') return textVal('date') !== '';
+  if (id === 'lawyer') return textVal('cem') !== '';
+  if (id === 'client') return textVal('lawyer') !== '';
+  if (id === 'activity') return textVal('client') !== '';
   return true;
 }
 
-['cem','lawyer','client','activity'].forEach(id=>{
+['cem', 'lawyer', 'client', 'activity'].forEach(id => {
   const el = document.getElementById(id);
-  el.addEventListener('focus', ()=>{
-    if(!canTypeNext(id)){
+  el.addEventListener('focus', () => {
+    if (!canTypeNext(id)) {
       const prev = getPreviousField(id);
       alert(`Please fill ${prev} first.`);
       document.getElementById(prev).focus();
@@ -163,27 +174,28 @@ function canTypeNext(id){
     }
     suggest(id);
   });
-  el.addEventListener('input', ()=>{suggest(id); checkDuplicateStatus();});
+  el.addEventListener('input', () => { suggest(id); checkDuplicateStatus(editIndex === null); });
 });
 
-function getPreviousField(id){
-  if(id==='cem') return 'date';
-  if(id==='lawyer') return 'cem';
-  if(id==='client') return 'lawyer';
-  if(id==='activity') return 'client';
+function getPreviousField(id) {
+  if (id === 'cem') return 'date';
+  if (id === 'lawyer') return 'cem';
+  if (id === 'client') return 'lawyer';
+  if (id === 'activity') return 'client';
   return '';
 }
 
 // ------------------- Auto-Set Status to 'On Going' if Duplicate -------------------
-function checkDuplicateStatus(){
-  const normalize = v => v.toLowerCase().trim();
+function checkDuplicateStatus(isNewEntry = true) {
+  if (!isNewEntry) return; // skip during edit
 
+  const normalize = v => v.toLowerCase().trim();
   const cem = textVal('cem');
   const lawyer = textVal('lawyer');
   const client = textVal('client');
   const activity = textVal('activity');
 
-  if(!cem || !lawyer || !client || !activity) return;
+  if (!cem || !lawyer || !client || !activity) return;
 
   const dup = logData.some(l =>
     normalize(l.cem) === normalize(cem) &&
@@ -192,40 +204,35 @@ function checkDuplicateStatus(){
     normalize(l.activity) === normalize(activity)
   );
 
-  if(dup){
-    document.getElementById('status').value = 'ongoing';
-    handleStatusChange();
-  } else {
-    document.getElementById('status').value = 'new';
-    handleStatusChange();
-  }
+  document.getElementById('status').value = dup ? 'ongoing' : 'new';
+  handleStatusChange();
 }
 
 // ------------------- Move group to Done -------------------
-function moveGroupToDone(cem, lawyer, client, activity){
+function moveGroupToDone(cem, lawyer, client, activity) {
   logData.forEach(l => {
-    if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
-      if(l.status !== 'done') l._prevStatus = l.status;
-      l.status='done';
+    if (l.cem === cem && l.lawyer === lawyer && l.client === client && l.activity === activity) {
+      if (l.status !== 'done') l._prevStatus = l.status;
+      l.status = 'done';
     }
   });
   localStorage.setItem("workLogs", JSON.stringify(logData));
 }
 
 // ------------------- Tab 2 (Client Activity) -------------------
-function refreshTab2(){
+function refreshTab2() {
   updateClientDropdown();
   updateClientActivityTable();
 }
 
-function updateClientDropdown(){
+function updateClientDropdown() {
   const clientSelect = document.getElementById('client-select');
-  const clients = [...new Set(logData.map(l=>l.client).filter(c=>{
-    return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
+  const clients = [...new Set(logData.map(l => l.client).filter(c => {
+    return logData.some(lg => lg.client === c && (lg.status === 'new' || lg.status === 'ongoing'));
   }))];
 
   clientSelect.innerHTML = '<option value="">-- Select Client --</option>';
-  clients.forEach(c=>{
+  clients.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
     opt.innerText = c;
@@ -233,21 +240,17 @@ function updateClientDropdown(){
   });
 }
 
-// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
-function updateClientActivityTable(){
+function updateClientActivityTable() {
   const client = document.getElementById('client-select').value;
   const tbody = document.querySelector("#client-activity-table tbody");
   tbody.innerHTML = '';
+  if (!client) return;
 
-  if(!client) return;
-
-  const filteredLogs = logData.filter(l => l.client === client && (l.status==='new'||l.status==='ongoing'));
-
-  // Group by CEM-Lawyer-Client-Activity
+  const filteredLogs = logData.filter(l => l.client === client && (l.status === 'new' || l.status === 'ongoing'));
   const grouped = {};
   filteredLogs.forEach(l => {
-    const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
-    if(!grouped[key]) grouped[key] = [];
+    const key = [l.cem, l.lawyer, l.client, l.activity].join('|');
+    if (!grouped[key]) grouped[key] = [];
     grouped[key].push(l);
   });
 
@@ -262,12 +265,11 @@ function updateClientActivityTable(){
       r.insertCell().innerText = l.update;
       const statusCell = r.insertCell();
       statusCell.innerText = l.status;
-      r.style.fontWeight = (l.status==='new') ? '700' : '400';
+      r.style.fontWeight = (l.status === 'new') ? '700' : '400';
     });
-    // Insert 1-row spacing after each group
     const spacer = tbody.insertRow();
     const cell = spacer.insertCell();
-    cell.colSpan = 7; // spans all table columns
+    cell.colSpan = 7;
     cell.style.height = '4px';
     cell.style.background = 'transparent';
   });
@@ -278,28 +280,25 @@ document.getElementById('client-select').addEventListener('change', updateClient
 // ------------------- Tab 3 (Accomplished Log) -------------------
 function stringToColor(str) {
   let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
   const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
   return "#" + "00000".substring(0, 6 - c.length) + c;
 }
 
-function updateAccomplishedTable(){
+function updateAccomplishedTable() {
   const tbody = document.querySelector("#accomplished-table tbody");
-  tbody.innerHTML='';
-
-  const doneLogs = logData.filter(l => l.status==='done');
+  tbody.innerHTML = '';
+  const doneLogs = logData.filter(l => l.status === 'done');
   const grouped = {};
-  doneLogs.forEach(l=>{
-    const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
-    if(!grouped[key]) grouped[key] = [];
+  doneLogs.forEach(l => {
+    const key = [l.cem, l.lawyer, l.client, l.activity].join('|');
+    if (!grouped[key]) grouped[key] = [];
     grouped[key].push(l);
   });
 
-  Object.entries(grouped).forEach(([key, group])=>{
+  Object.entries(grouped).forEach(([key, group]) => {
     const groupColor = stringToColor(key);
-    group.forEach((l,i)=>{
+    group.forEach(l => {
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
       r.insertCell().innerText = l.cem;
@@ -318,18 +317,15 @@ function updateAccomplishedTable(){
 }
 
 // ------------------- Revert Done Group -------------------
-function revertDoneGroup(cem, lawyer, client, activity){
-  if(confirm("Revert this group back to previous status?")){
-    logData = logData.filter(l => {
-      if(l.cem===cem && l.lawyer===lawyer && l.client===client && l.activity===activity){
-        if(l.status==='done' && l._prevStatus){
+function revertDoneGroup(cem, lawyer, client, activity) {
+  if (confirm("Revert this group back to previous status?")) {
+    logData.forEach(l => {
+      if (l.cem === cem && l.lawyer === lawyer && l.client === client && l.activity === activity) {
+        if (l.status === 'done' && l._prevStatus) {
           l.status = l._prevStatus;
           delete l._prevStatus;
-          return true;
         }
-        return l.status!=='done';
       }
-      return true;
     });
     localStorage.setItem("workLogs", JSON.stringify(logData));
     refreshAllTabs();
@@ -337,26 +333,13 @@ function revertDoneGroup(cem, lawyer, client, activity){
 }
 
 // ------------------- Refresh All Tabs -------------------
-function refreshAllTabs(){
+function refreshAllTabs() {
   updateHistoryTable();
   refreshTab2();
   updateAccomplishedTable();
 }
 
-// Clear form + hide suggestions
+// ------------------- Clear Form -------------------
 function clearForm() {
-    // Clear all input fields
-    ['date','cem','lawyer','client','activity','update'].forEach(id => {
-        if(document.getElementById(id)) document.getElementById(id).value = '';
-    });
-
-    // Reset status and hide update box
-    document.getElementById('status').value = 'new';
-    handleStatusChange();
-
-    // Hide all suggestion boxes immediately
-    ['cem','lawyer','client','activity'].forEach(id => {
-        const box = document.getElementById(id + '-suggestions');
-        if(box) box.innerHTML = '';
-    });
+  resetForm();
 }

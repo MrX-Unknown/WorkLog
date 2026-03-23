@@ -233,11 +233,11 @@ function updateClientDropdown(){
   });
 }
 
-// UPDATED: Separate activity groups with 3-row spacing
+// UPDATED: Separate activity groups with 1-row spacing and scrollable rows
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
-  const tbody = document.querySelector("#client-activity-table tbody");
-  tbody.innerHTML = '';
+  const container = document.querySelector("#client-activity-table tbody");
+  container.innerHTML = '';
 
   if(!client) return;
 
@@ -252,7 +252,33 @@ function updateClientActivityTable(){
   });
 
   Object.values(grouped).forEach((group, gIndex) => {
-    group.forEach((l) => {
+    // Create a mini table for the group
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.marginBottom = '4px'; // 1-row spacing between groups
+    table.style.display = 'block';
+    table.style.maxHeight = '180px';
+    table.style.overflowY = 'auto';
+
+    // Create table head (fixed first row)
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    ['Date','CEM','Lawyer','Client','Activity','Update','Status'].forEach(h=>{
+      const th = document.createElement('th');
+      th.innerText = h;
+      th.style.position = 'sticky';
+      th.style.top = '0';
+      th.style.background = '#b8e0d2';
+      th.style.zIndex = '1';
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    // Create tbody for scrollable rows
+    const tbody = document.createElement('tbody');
+    group.forEach(l=>{
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
       r.insertCell().innerText = l.cem;
@@ -264,14 +290,10 @@ function updateClientActivityTable(){
       statusCell.innerText = l.status;
       r.style.fontWeight = (l.status==='new') ? '700' : '400';
     });
+    table.appendChild(tbody);
 
-    // Add 3 empty rows as spacing between groups
-    if (gIndex < Object.values(grouped).length - 1) {
-      for(let i=0;i<3;i++){
-        const emptyRow = tbody.insertRow();
-        emptyRow.innerHTML = '<td colspan="7">&nbsp;</td>';
-      }
-    }
+    // Append mini table to main container
+    container.appendChild(document.createElement('tr')).appendChild(document.createElement('td')).appendChild(table);
   });
 }
 

@@ -9,6 +9,7 @@
 <body> 
     <div class="app-container"> 
         <h1>Work Log Dashboard</h1> 
+
         <!-- Tabs --> 
         <div class="tabs"> 
             <button class="tab-button active-tab-button" onclick="showTab(1)">Activity Log</button> 
@@ -58,7 +59,13 @@
                         <label>Update</label> 
                         <input type="text" id="update"> 
                     </div> 
-                    <button class="primary-btn" onclick="saveLog()">Enter</button> 
+
+                    <!-- Buttons Row --> 
+                    <div class="form-actions" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <button class="primary-btn" onclick="saveLog()">Enter</button>
+                        <button class="secondary-btn" onclick="clearForm()">Clear</button>
+                    </div>
+
                 </div> 
 
                 <!-- TABLE --> 

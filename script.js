@@ -342,3 +342,21 @@ function refreshAllTabs(){
   refreshTab2();
   updateAccomplishedTable();
 }
+
+// Clear form + hide suggestions
+function clearForm() {
+    // Clear all input fields
+    ['date','cem','lawyer','client','activity','update'].forEach(id => {
+        if(document.getElementById(id)) document.getElementById(id).value = '';
+    });
+
+    // Reset status and hide update box
+    document.getElementById('status').value = 'new';
+    handleStatusChange();
+
+    // Hide all suggestion boxes immediately
+    ['cem','lawyer','client','activity'].forEach(id => {
+        const box = document.getElementById(id + '-suggestions');
+        if(box) box.innerHTML = '';
+    });
+}

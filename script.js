@@ -408,11 +408,15 @@ function refreshTab2(){
 
 function updateClientDropdown(){
   const clientSelect = document.getElementById('client-select');
-  const clients = [...new Set(logData.map(l=>l.client).filter(c=>{
-    return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
-  }))];
+
+  const clients = [...new Set(
+    logData.map(l=>l.client).filter(c=>{
+      return logData.some(lg=>lg.client===c && (lg.status==='new'||lg.status==='ongoing'));
+    })
+  )];
 
   clientSelect.innerHTML = '<option value="">-- Select Client --</option>';
+
   clients.forEach(c=>{
     const opt = document.createElement('option');
     opt.value = c;
@@ -423,14 +427,17 @@ function updateClientDropdown(){
 
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
-  const container = document.getElementById('tab2-scrollable');
-  container.innerHTML = '';
+  const tbody = document.querySelector("#client-activity-table tbody");
+  tbody.innerHTML = '';
 
   if(!client) return;
 
-  const filteredLogs = logData.filter(l => l.client === client && (l.status==='new'||l.status==='ongoing'));
+  const filteredLogs = logData.filter(l => 
+    l.client === client && (l.status==='new'||l.status==='ongoing')
+  );
 
   const grouped = {};
+
   filteredLogs.forEach(l => {
     const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
     if(!grouped[key]) grouped[key] = [];
@@ -438,23 +445,21 @@ function updateClientActivityTable(){
   });
 
   Object.values(grouped).forEach(group=>{
-    const table = document.createElement('table');
-    table.style.marginBottom = '10px';
-
     group.forEach(l=>{
-      const r = table.insertRow();
-      r.insertCell().setAttribute('data-label','Date').innerText = l.date;
-      r.insertCell().setAttribute('data-label','CEM').innerText = l.cem;
-      r.insertCell().setAttribute('data-label','Lawyer').innerText = l.lawyer;
-      r.insertCell().setAttribute('data-label','Client').innerText = l.client;
-      r.insertCell().setAttribute('data-label','Activity').innerText = l.activity;
-      r.insertCell().setAttribute('data-label','Update').innerText = l.update;
-      const statusCell = r.insertCell();
-      statusCell.setAttribute('data-label','Status');
-      statusCell.innerText = l.status;
-    });
+      const r = tbody.insertRow();
 
-    container.appendChild(table);
+      r.insertCell().innerText = l.date;
+      r.insertCell().innerText = l.cem;
+      r.insertCell().innerText = l.lawyer;
+      r.insertCell().innerText = l.client;
+      r.insertCell().innerText = l.activity;
+      r.insertCell().innerText = l.update;
+
+      const statusCell = r.insertCell();
+      statusCell.innerText = l.status;
+
+      r.style.fontWeight = (l.status==='new') ? '700' : '400';
+    });
   });
 }
 

@@ -241,10 +241,12 @@ function updateClientActivityTable(){
 
   if(!client) return;
 
-  const filteredLogs = logData.filter(l => l.client === client && (l.status==='new'||l.status==='ongoing'));
+  const filteredLogs = logData.filter(l => 
+    l.client === client && (l.status==='new'||l.status==='ongoing')
+  );
 
-  // Group by CEM-Lawyer-Client-Activity
   const grouped = {};
+
   filteredLogs.forEach(l => {
     const key = [l.cem,l.lawyer,l.client,l.activity].join('|');
     if(!grouped[key]) grouped[key] = [];
@@ -252,6 +254,7 @@ function updateClientActivityTable(){
   });
 
   Object.values(grouped).forEach(group => {
+
     group.forEach(l => {
       const r = tbody.insertRow();
       r.insertCell().innerText = l.date;
@@ -260,15 +263,19 @@ function updateClientActivityTable(){
       r.insertCell().innerText = l.client;
       r.insertCell().innerText = l.activity;
       r.insertCell().innerText = l.update;
+
       const statusCell = r.insertCell();
       statusCell.innerText = l.status;
+
       r.style.fontWeight = (l.status==='new') ? '700' : '400';
     });
-    // Insert 1-row spacing after each group
+
+    // ✅ Visible spacer row
     const spacer = tbody.insertRow();
     const cell = spacer.insertCell();
-    cell.colSpan = 7; // spans all table columns
-    cell.style.height = '4px';
+    cell.colSpan = 7;
+    cell.innerHTML = '&nbsp;';  // prevents collapse
+    cell.style.height = '10px';
     cell.style.background = 'transparent';
   });
 }

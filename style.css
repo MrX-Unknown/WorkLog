@@ -178,3 +178,103 @@ tbody tr:hover {
   transform: translateY(0);
   max-height: 100px;
 }
+
+/* ------------------- Mobile Responsiveness ------------------- */
+@media screen and (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tab-button {
+    flex: 1 1 45%;
+    margin: 5px;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* Grid layout for form + table */
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Cards take full width */
+  .card {
+    width: 100%;
+    padding: 15px;
+  }
+
+  /* Form Inputs */
+  .form-group input,
+  .form-group select {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* Tables Scrollable horizontally */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* hide table header on very small screens */
+  }
+
+  tbody tr {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e0ece8;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 10px;
+    text-align: right;
+    font-size: 13px;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+    flex: 1;
+    color: #5a6c57;
+  }
+
+  /* Suggestions dropdown */
+  .suggestions {
+    max-height: 100px;
+    font-size: 13px;
+  }
+
+  /* Buttons smaller */
+  button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* Scrollable container height for tables on mobile */
+  .scrollable {
+    max-height: 220px;
+  }
+
+}

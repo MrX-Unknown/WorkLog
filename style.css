@@ -1,447 +1,175 @@
-/* ------------------- Global ------------------- */
-body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(135deg, #fdf6f0, #f0f8ff);
-  color: #444;
-}
-
-h1 {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 700;
-  color: #5a6c57;
-  margin-bottom: 20px;
-}
-
-/* ------------------- Tabs ------------------- */
-.tab-button {
-  padding: 10px 18px;
-  margin: 6px;
-  border-radius: 20px;
-  border: none;
-  background: #e6f4f1;
-  color: #4b5d5a;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.tab-button:hover {
-  background: #d2ece6;
-  transform: translateY(-2px);
-}
-
-.tab-button.active-tab-button {
-  background: #b8e0d2;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-/* ------------------- Card Containers ------------------- */
-.form-container,
-.history-container,
-.client-activity-container,
-.removed-clients-container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #ffffffcc;
-  backdrop-filter: blur(8px);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-/* ------------------- Form ------------------- */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: #6b7a75;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #d6e4df;
-  background: #f9fdfc;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #b8e0d2;
-  box-shadow: 0 0 0 3px rgba(184, 224, 210, 0.3);
-}
-
-/* ------------------- Buttons ------------------- */
-button {
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: none;
-  background: #b8e0d2;
-  color: #3d4f4a;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  background: #a0d6c4;
-  transform: translateY(-1px);
-}
-
-/* ------------------- Tables ------------------- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-th,
-td {
-  padding: 10px;
-  text-align: left;
-}
-
-thead th {
-  background: #b8e0d2;
-  color: #3d4f4a;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-tbody tr {
-  transition: background 0.2s ease;
-}
-
-tbody tr:nth-child(even) {
-  background: #f4fbf9;
-}
-
-tbody tr:nth-child(odd) {
-  background: #ffffff;
-}
-
-tbody tr:hover {
-  background: #eaf7f3;
-}
-
-/* ------------------- Scrollable ------------------- */
-.scrollable {
-  max-height: 260px;
-  overflow-y: auto;
-  border-radius: 12px;
-  border: 1px solid #e0ece8;
-}
-
-/* ------------------- Suggestions ------------------- */
-.suggestions {
-  max-height: 120px;
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 10px;
-  margin-top: 5px;
-  border: 1px solid #d6e4df;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-}
-
-.suggestions div {
-  padding: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.suggestions div:hover {
-  background: #eaf7f3;
-}
-
-/* ------------------- Update Box Animation ------------------- */
-#update-container {
-  opacity: 0;
-  transform: translateY(-10px);
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-#update-container.visible {
-  opacity: 1;
-  transform: translateY(0);
-  max-height: 100px;
-}
-
-/* ------------------- Hamburger Menu ------------------- */
-.hamburger-container {
-  display: block;
-  text-align: left;
-  margin-bottom: 10px;
-}
-
-#hamburger-btn {
-  font-size: 28px;
-  background: #b8e0d2;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-#hamburger-btn:hover {
-  background: #a0d6c4;
-  transform: translateY(-1px);
-}
-
-/* Mobile Responsiveness */
-@media screen and (max-width: 768px) {
-
-  body {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 32px;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .tab-button {
-    flex: 1 1 45%;
-    margin: 5px;
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  .grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .card {
-    width: 100%;
-    padding: 15px;
-  }
-
-  .form-group input,
-  .form-group select {
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tbody tr {
-    margin-bottom: 12px;
-    border-bottom: 1px solid #e0ece8;
-  }
-
-  tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 10px;
-    text-align: right;
-    font-size: 13px;
-  }
-
-  tbody td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    text-align: left;
-    flex: 1;
-    color: #5a6c57;
-  }
-
-  .suggestions {
-    max-height: 100px;
-    font-size: 13px;
-  }
-
-  button {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .scrollable {
-    max-height: 220px;
-  }
-}
-
-/* ------------------- Hamburger (Top Right, Smaller) ------------------- */
-.hamburger-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-#hamburger-btn {
-  font-size: 20px;
-  padding: 5px 8px;
-  border-radius: 6px;
-}
-
-/* ------------------- Tab 4 Styling ------------------- */
-.tab4-container {
-  text-align: center;
-  position: relative;
-  min-height: 400px;
-}
-
-.tab4-title {
-  font-size: 36px;
-  margin-bottom: 5px;
-  color: #5a6c57;
-}
-
-.tab4-subtitle {
-  font-size: 18px;
-  color: #7a8c86;
-  margin-bottom: 30px;
-}
-
-/* Center Buttons */
-.tab4-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.tab4-buttons button {
-  width: 200px;
-  padding: 12px;
-  font-size: 15px;
-}
-
-/* ------------------- Back Button (Bottom Right) ------------------- */
-#back-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  font-size: 18px;
-  padding: 8px 12px;
-}
-
-/* ------------------- Mobile Adjustments ------------------- */
-@media screen and (max-width: 768px) {
-  .hamburger-container {
-    top: 10px;
-    right: 10px;
-  }
-
-  #hamburger-btn {
-    font-size: 18px;
-    padding: 4px 7px;
-  }
-
-  .tab4-title {
-    font-size: 28px;
-  }
-
-  .tab4-buttons button {
-    width: 160px;
-    font-size: 14px;
-  }
-}
-
-/* ------------------- Hide Header & Tabs in Tab 4 ------------------- */
-#tab4 ~ * {
-  display: block;
-}
-
-/* Hide elements when Tab 4 is active */
-body:has(#tab4[style*="block"]) h1,
-body:has(#tab4[style*="block"]) .tabs,
-body:has(#tab4[style*="block"]) .hamburger-container {
-  display: none;
-}
-
-/* Hamburger top right */
-.hamburger-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-#hamburger-btn {
-  font-size: 20px;
-  padding: 5px 8px;
-  border-radius: 6px;
-}
-
-/* Tab 4 */
-.tab4-container {
-  text-align: center;
-  position: relative;
-  min-height: 400px;
-}
-
-.tab4-title {
-  font-size: 36px;
-  margin-bottom: 5px;
-  color: #5a6c57;
-}
-
-.tab4-subtitle {
-  font-size: 18px;
-  color: #7a8c86;
-  margin-bottom: 30px;
-}
-
-.tab4-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.tab4-buttons button {
-  width: 200px;
-}
-
-#back-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-}
-
-#client-activity-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px; /* ensures table can scroll */
-}
-
-.scrollable {
-  max-height: 260px;
-  overflow-y: auto;
-  overflow-x: auto; /* enable horizontal scrolling */
-  border-radius: 12px;
-  border: 1px solid #e0ece8;
+/* ------------------- Global ------------------- */ 
+body { 
+    font-family: 'Segoe UI', Tahoma, sans-serif; 
+    margin: 0; 
+    padding: 20px; 
+    background: linear-gradient(135deg, #fdf6f0, #f0f8ff); 
+    color: #444; 
+} 
+
+h1 { 
+    text-align: center; 
+    font-size: 42px; 
+    font-weight: 700; 
+    color: #5a6c57; 
+    margin-bottom: 20px; 
+} 
+
+/* ------------------- Tabs ------------------- */ 
+.tab-button { 
+    padding: 10px 18px; 
+    margin: 6px; 
+    border-radius: 20px; 
+    border: none; 
+    background: #e6f4f1; 
+    color: #4b5d5a; 
+    font-weight: 500; 
+    cursor: pointer; 
+    transition: all 0.25s ease; 
+} 
+
+.tab-button:hover { 
+    background: #d2ece6; 
+    transform: translateY(-2px); 
+} 
+
+.tab-button.active-tab-button { 
+    background: #b8e0d2; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+} 
+
+/* ------------------- Card Containers ------------------- */ 
+.form-container, .history-container, .client-activity-container, .removed-clients-container { 
+    max-width: 900px; 
+    margin: 20px auto; 
+    background: #ffffffcc; 
+    backdrop-filter: blur(8px); 
+    padding: 20px; 
+    border-radius: 16px; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08); 
+} 
+
+/* ------------------- Form ------------------- */ 
+.form-group { 
+    margin-bottom: 14px; 
+} 
+
+.form-group label { 
+    font-weight: 600; 
+    font-size: 14px; 
+    margin-bottom: 4px; 
+    color: #6b7a75; 
+} 
+
+.form-group input, .form-group select { 
+    width: 100%; 
+    padding: 10px; 
+    border-radius: 10px; 
+    border: 1px solid #d6e4df; 
+    background: #f9fdfc; 
+    transition: all 0.2s ease; 
+} 
+
+.form-group input:focus, .form-group select:focus { 
+    outline: none; 
+    border-color: #b8e0d2; 
+    box-shadow: 0 0 0 3px rgba(184,224,210,0.3); 
+} 
+
+/* ------------------- Buttons ------------------- */ 
+button { 
+    padding: 10px 16px; 
+    border-radius: 10px; 
+    border: none; 
+    background: #b8e0d2; 
+    color: #3d4f4a; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+} 
+
+button:hover { 
+    background: #a0d6c4; 
+    transform: translateY(-1px); 
+} 
+
+/* ------------------- Tables ------------------- */ 
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    border-radius: 10px; 
+    overflow: hidden; 
+} 
+
+th, td { 
+    padding: 10px; 
+    text-align: left; 
+} 
+
+thead th { 
+    background: #b8e0d2; 
+    color: #3d4f4a; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1; 
+} 
+
+tbody tr { 
+    transition: background 0.2s ease; 
+} 
+
+tbody tr:nth-child(even) { 
+    background: #f4fbf9; 
+} 
+
+tbody tr:nth-child(odd) { 
+    background: #ffffff; 
+} 
+
+tbody tr:hover { 
+    background: #eaf7f3; 
+} 
+
+/* ------------------- Scrollable ------------------- */ 
+.scrollable { 
+    max-height: 260px; 
+    overflow-y: auto; 
+    border-radius: 12px; 
+    border: 1px solid #e0ece8; 
+} 
+
+/* ------------------- Suggestions ------------------- */ 
+.suggestions { 
+    max-height: 120px; 
+    overflow-y: auto; 
+    background: #ffffff; 
+    border-radius: 10px; 
+    margin-top: 5px; 
+    border: 1px solid #d6e4df; 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+} 
+
+.suggestions div { 
+    padding: 8px; 
+    cursor: pointer; 
+    transition: background 0.2s ease; 
+} 
+
+.suggestions div:hover { 
+    background: #eaf7f3; 
+} 
+
+/* ------------------- Update Box Animation ------------------- */ 
+#update-container { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+    max-height: 0; 
+    overflow: hidden; 
+    transition: all 0.3s ease; 
+} 
+
+#update-container.visible { 
+    opacity: 1; 
+    transform: translateY(0); 
+    max-height: 100px; 
 }

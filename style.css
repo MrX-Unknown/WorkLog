@@ -183,3 +183,63 @@ tbody tr:hover {
     transform: translateY(0); 
     max-height: 100px; 
 }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .grid {
+    display: block; /* stack cards vertically */
+  }
+
+  .card {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block; /* make tables scrollable horizontally */
+  }
+
+  table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  thead tr {
+    display: none; /* hide table headers on small screens, optional */
+  }
+
+  tbody tr {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    border: 1px solid #e0ece8;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+
+  .tab-button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .form-group input, .form-group select {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+}

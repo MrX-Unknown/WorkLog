@@ -19,6 +19,21 @@ function showTab(n){
   if(n <= 3){
     document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
   }
+
+  // Toggle UI visibility for Tab 4
+  const header = document.querySelector("h1");
+  const tabs = document.querySelector(".tabs");
+  const hamburger = document.querySelector(".hamburger-container");
+
+  if(n === 4){
+    header.style.display = "none";
+    tabs.style.display = "none";
+    hamburger.style.display = "none";
+  } else {
+    header.style.display = "block";
+    tabs.style.display = "flex";
+    hamburger.style.display = "block";
+  }
 }
 
 // ------------------- Save / Enter -------------------

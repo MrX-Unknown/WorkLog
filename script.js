@@ -254,7 +254,7 @@ function updateClientDropdown(){
   });
 }
 
-// ------------------- Tab 2 (Client Activity) Updated: Single table, group spacing, no repeated header -------------------
+// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
   const tbody = document.querySelector("#client-activity-table tbody");
@@ -293,6 +293,8 @@ function updateClientActivityTable(){
     cell.style.background = 'transparent';
   });
 }
+
+document.getElementById('client-select').addEventListener('change', updateClientActivityTable);
 
 // ------------------- Tab 3 (Accomplished Log) -------------------
 function stringToColor(str) {

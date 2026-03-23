@@ -39,7 +39,7 @@ h1 {
 } 
 
 /* ------------------- Card Containers ------------------- */ 
-.form-container, .history-container, .client-activity-container, .removed-clients-container { 
+.form-container, .history-container, .client-activity-container, .removed-clients-container, .card { 
     max-width: 900px; 
     margin: 20px auto; 
     background: #ffffffcc; 
@@ -92,6 +92,16 @@ button:hover {
     background: #a0d6c4; 
     transform: translateY(-1px); 
 } 
+
+.secondary-btn {
+    background: #f0adad;
+    color: #5a2d2d;
+}
+
+.secondary-btn:hover {
+    background: #e18989;
+    transform: translateY(-1px);
+}
 
 /* ------------------- Tables ------------------- */ 
 table { 

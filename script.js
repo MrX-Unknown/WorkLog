@@ -1,3 +1,4 @@
+let previousTab = 1;
 let logData = JSON.parse(localStorage.getItem("workLogs")) || [];
 let editIndex = null;
 
@@ -9,10 +10,15 @@ window.onload = () => {
 
 // ------------------- Tabs -------------------
 function showTab(n){
+  if(n !== 4) previousTab = n;
+
   document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
   document.getElementById("tab"+n).style.display="block";
+
   document.querySelectorAll(".tab-button").forEach(b=>b.classList.remove("active-tab-button"));
-  document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
+  if(n <= 3){
+    document.querySelectorAll(".tab-button")[n-1].classList.add("active-tab-button");
+  }
 }
 
 // ------------------- Save / Enter -------------------
@@ -348,6 +354,11 @@ function refreshAllTabs(){
 // ------------------- Hamburger Button to Tab 4 -------------------
 document.getElementById('hamburger-btn').addEventListener('click', () => {
   showTab(4);
+});
+
+// ------------------- back Button to Tab 4 -------------------
+document.getElementById('back-btn').addEventListener('click', () => {
+  showTab(previousTab);
 });
 
 // ------------------- Tab 2 (Client Activity) Updated -------------------

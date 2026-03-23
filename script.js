@@ -233,7 +233,6 @@ function moveGroupToDone(cem, lawyer, client, activity){
   localStorage.setItem("workLogs", JSON.stringify(logData));
 }
 
-// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
 // ------------------- Tab 2 (Client Activity) -------------------
 function refreshTab2(){
   updateClientDropdown();
@@ -255,7 +254,7 @@ function updateClientDropdown(){
   });
 }
 
-// ------------------- UPDATED Tab 2: Single table, aligned, 1-row spacing -------------------
+// ------------------- Tab 2 (Client Activity) Updated: Single table, group spacing, no repeated header -------------------
 function updateClientActivityTable(){
   const client = document.getElementById('client-select').value;
   const tbody = document.querySelector("#client-activity-table tbody");
@@ -294,8 +293,6 @@ function updateClientActivityTable(){
     cell.style.background = 'transparent';
   });
 }
-
-document.getElementById('client-select').addEventListener('change', updateClientActivityTable);
 
 // ------------------- Tab 3 (Accomplished Log) -------------------
 function stringToColor(str) {

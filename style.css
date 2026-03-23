@@ -431,3 +431,17 @@ body:has(#tab4[style*="block"]) .hamburger-container {
   bottom: 15px;
   right: 15px;
 }
+
+#client-activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* ensures table can scroll */
+}
+
+.scrollable {
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: auto; /* enable horizontal scrolling */
+  border-radius: 12px;
+  border: 1px solid #e0ece8;
+}
